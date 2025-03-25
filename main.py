@@ -50,7 +50,7 @@ class FlashCardTerminal:
             self.df = pd.DataFrame(columns=COLUMNS)
 
     def _save(self):
-        self.df.to_csv(db, index=False)
+        self.df.sort_values('word').to_csv(db, index=False)
 
     def get(self):
         pass
@@ -67,13 +67,14 @@ class FlashCardTerminal:
         word = input('word: ')
         word = word.lower()
         if word in self.df['word'].unique():
-            return
+            print('Attention le mot existe déjà')
 
         translation = asyncio.run(translate_text(word))
+        translation = input(translation.text) or translation.text
 
         row = pd.Series({
             'word': word, 
-            'translation': translation.text,
+            'translation': translation,
             'created': pd.Timestamp.now().as_unit('s'),
             'success': 0,
             'fail': 0,
@@ -109,7 +110,7 @@ class FlashCardTerminal:
     def main(self):
         while True:
             os.system('clear')
-            print(self.df, '\n')
+            print(self.df[['word', 'translation']], '\n')
             self.menu(MENU_HOME)
             input1 = input()
 

@@ -3,3 +3,7 @@
 - integration of django
 - hosting it (local or cloud)
 - svelte ?
+
+### Card info
+- francais, korean, type, note
+    - need some info for particule, adverbe sometime

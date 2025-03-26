@@ -1,5 +1,6 @@
 # Goal
 - working flashcard with some stats.
+- papago vs google translate
 - integration of django
 - hosting it (local or cloud)
 - svelte ?

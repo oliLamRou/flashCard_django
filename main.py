@@ -1,10 +1,12 @@
 import os
-import pandas as pd
 from pathlib import Path
-import random
+import hashlib
 
+import pandas as pd
 import asyncio
 from googletrans import Translator
+
+from _CONSTANT import *
 
 async def translate_text(word):
     translator = Translator()
@@ -14,28 +16,7 @@ path = Path(__file__)
 dir = path.parent.absolute()
 db = os.path.join(dir, 'db.csv')
 
-COLUMNS = [
-    'word',
-    'translation',
-    'last_try',
-    'created',
-    'success',
-    'fail',
-]
-
-MENU_GUESS = [
-    'good',
-    'bad'
-]
-
-MENU_HOME = [
-    'play',
-    'add',
-    'edit',
-    'remove',
-]
-
-class FlashCardTerminal:
+class FlashCard:
     def __init__(self):
         self.df = None
         self.stack = None
@@ -50,7 +31,7 @@ class FlashCardTerminal:
             self.df = pd.DataFrame(columns=COLUMNS)
 
     def _save(self):
-        self.df.sort_values('word').to_csv(db, index=False)
+        self.df.sort_values(LANGUAGE_A).to_csv(db, index=False)
 
     def get(self):
         pass
@@ -66,15 +47,15 @@ class FlashCardTerminal:
 
         word = input('word: ')
         word = word.lower()
-        if word in self.df['word'].unique():
+        if word in self.df[LANGUAGE_A].unique():
             print('Attention le mot existe déjà')
 
         translation = asyncio.run(translate_text(word))
         translation = input(translation.text) or translation.text
 
         row = pd.Series({
-            'word': word, 
-            'translation': translation,
+            LANGUAGE_A: word,
+            LANGUAGE_B: translation,
             'created': pd.Timestamp.now().as_unit('s'),
             'success': 0,
             'fail': 0,
@@ -86,9 +67,9 @@ class FlashCardTerminal:
             os.system('clear')
             row = self.df.sample(1).iloc[0]
             
-            input(f'{row.word} (enter to see answer)')
+            input(f'{row.LANGUAGE_A} (enter to see answer)')
 
-            print(f'{row.word} -> {row.translation} \n')
+            print(f'{row.LANGUAGE_A} -> {row.translation} \n')
             self.menu(MENU_GUESS)
             answer = input('answer: ')
             
@@ -110,7 +91,7 @@ class FlashCardTerminal:
     def main(self):
         while True:
             os.system('clear')
-            print(self.df[['word', 'translation']], '\n')
+            print(self.df[[LANGUAGE_A, LANGUAGE_B]], '\n')
             self.menu(MENU_HOME)
             input1 = input()
 
@@ -130,8 +111,6 @@ class FlashCardTerminal:
             
         self._save()
 
-
-
 if __name__ == '__main__':
-    fc = FlashCardTerminal()
+    fc = FlashCard()
     fc.main()

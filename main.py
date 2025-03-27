@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import hashlib
+from uuid import uuid4
 
 import pandas as pd
 import asyncio
@@ -61,6 +62,7 @@ class FlashCard:
         translation = input(translation.text) or translation.text
 
         row = pd.Series({
+            'id': uuid4()
             LANGUAGE_A: word,
             LANGUAGE_B: translation,
             'created': pd.Timestamp.now().as_unit('s'),
@@ -68,6 +70,8 @@ class FlashCard:
         self.words = pd.concat([self.words, row]).reset_index(drop=True)
 
     def play(self):
+        self.user.set_index('id', inplace=True)
+
         while True:
             os.system('clear')
             row = self.words.sample(1).iloc[0]
@@ -78,16 +82,16 @@ class FlashCard:
             self.menu(MENU_GUESS)
             answer = input('answer: ')
             
-            self.user.set_index('id', inplace=True)
+            
             self.user.loc[row.id, 'last_try'] = pd.Timestamp.now().as_unit('s')
             self.user.fillna(0, inplace=True)
             if answer == '1':
                 previous = self.user.loc[row.id, 'success']
                 self.user.loc[row.id, 'success'] = previous + 1
-                break
             elif answer == '2':
                 previous = self.user.loc[row.id, 'fail']
                 self.user.loc[row.id, 'fail'] = previous + 1
+            else:
                 break
         
         self.user.reset_index(inplace=True)
@@ -102,8 +106,7 @@ class FlashCard:
     def main(self):
         while True:
             os.system('clear')
-            print(self.words.columns)
-            print(self.words[[LANGUAGE_A, LANGUAGE_B]], '\n')
+            print(self.words[[LANGUAGE_A, LANGUAGE_B]].tail(5), '\n')
             self.menu(MENU_HOME)
             input1 = input()
 

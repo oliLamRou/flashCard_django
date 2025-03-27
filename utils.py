@@ -14,4 +14,12 @@ def split_and_add_id():
     # print(df)
 
 if __name__ == '__main__':
-    pass
+    df = pd.read_csv('words.csv')
+    df['id'] = df['id'].fillna('')
+    for i in df.index:
+        if df.loc[i, 'id'] == '':
+            df.loc[i, 'id'] = uuid4()
+
+    print(df)
+    df.to_csv('words_.csv', index=False)
+    

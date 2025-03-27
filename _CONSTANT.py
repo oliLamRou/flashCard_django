@@ -17,7 +17,8 @@ USER_COLUMNS = [
 
 MENU_GUESS = [
     'good',
-    'bad'
+    'bad',
+    'anything else to stop'
 ]
 
 MENU_HOME = [

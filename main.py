@@ -37,8 +37,10 @@ class FlashCard:
         #USER
         if os.path.isfile(user_path):
             self.user = pd.read_csv(user_path)
+            self.user['fail'] = self.user['fail'].astype('int32')
+            self.user['success'] = self.user['success'].astype('int32')
         else:
-            self.user = pd.DataFrame(columns=USER_COLUMNS)            
+            self.user = pd.DataFrame(columns=USER_COLUMNS)
 
     def _save(self):
         self.words.sort_values(LANGUAGE_A).to_csv(words_path, index=False)
@@ -62,7 +64,7 @@ class FlashCard:
         translation = input(translation.text) or translation.text
 
         row = pd.Series({
-            'id': uuid4()
+            'id': uuid4(),
             LANGUAGE_A: word,
             LANGUAGE_B: translation,
             'created': pd.Timestamp.now().as_unit('s'),
@@ -70,12 +72,39 @@ class FlashCard:
         self.words = pd.concat([self.words, row]).reset_index(drop=True)
 
     def play(self):
+        #Add fail and success AB vs BA
+
         self.user.set_index('id', inplace=True)
 
         while True:
             os.system('clear')
-            row = self.words.sample(1).iloc[0]
+            '''
+                sample all first timer
+                get 10% of positive ratio
+                get 50% of negative ratio
+                random pick one
+            '''
+            unguessed = self.words[~(self.words['id'].isin(self.user.index))]
             
+            positive_id = self.user[(self.user['success'] > self.user['fail'])].sample(frac=0.1).index
+            positive = self.words[(self.words['id'].isin(positive_id))]
+            
+            negative_id = self.user[(self.user['fail'] > self.user['success'])].sample(frac=0.3).index
+            negative = self.words[(self.words['id'].isin(negative_id))]
+
+            words = pd.concat([unguessed, positive, negative])            
+            
+            if words['id'].size < 1:
+                words = self.words
+                
+            row = words.sample(1).iloc[0]
+
+            if row.id in self.user.index:
+                # print(self.user.loc[row.id, 'fail'])
+                print(f"failed: {self.user.loc[row.id, 'fail']} // success: {self.user.loc[row.id, 'success']}")
+            else: 
+                print('new word')
+
             input(f'{row[LANGUAGE_A]} (enter to answer)')
 
             print(f'{row[LANGUAGE_A]} -> {row[LANGUAGE_B]} \n')

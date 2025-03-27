@@ -14,24 +14,34 @@ async def translate_text(word):
     
 path = Path(__file__)
 dir = path.parent.absolute()
-db = os.path.join(dir, 'db.csv')
+words_path = os.path.join(dir, 'words.csv')
+user_path = os.path.join(dir, 'user.csv')
 
 class FlashCard:
     def __init__(self):
-        self.df = None
+        self.words = None
+        self.user = None
         self.stack = None
         self.translator = Translator()
         self._load()
 
     #DB
     def _load(self):
-        if os.path.isfile(db):
-            self.df = pd.read_csv(db)
+        #WORDS
+        if os.path.isfile(words_path):
+            self.words = pd.read_csv(words_path)
         else:
-            self.df = pd.DataFrame(columns=COLUMNS)
+            self.words = pd.DataFrame(columns=WORDS_COLUMNS)
+
+        #USER
+        if os.path.isfile(user_path):
+            self.user = pd.read_csv(user_path)
+        else:
+            self.user = pd.DataFrame(columns=USER_COLUMNS)            
 
     def _save(self):
-        self.df.sort_values(LANGUAGE_A).to_csv(db, index=False)
+        self.words.sort_values(LANGUAGE_A).to_csv(words_path, index=False)
+        self.user.to_csv(user_path, index=False)
 
     def get(self):
         pass
@@ -40,14 +50,11 @@ class FlashCard:
         pass
 
     def add(self):
-        #check if not empty
-        #check if already exist
-        
         os.system('clear')
 
         word = input('word: ')
         word = word.lower()
-        if word in self.df[LANGUAGE_A].unique():
+        if word in self.words[LANGUAGE_A].unique():
             print('Attention le mot existe déjà')
 
         translation = asyncio.run(translate_text(word))
@@ -57,29 +64,33 @@ class FlashCard:
             LANGUAGE_A: word,
             LANGUAGE_B: translation,
             'created': pd.Timestamp.now().as_unit('s'),
-            'success': 0,
-            'fail': 0,
             }).to_frame().T
-        self.df = pd.concat([self.df, row]).reset_index(drop=True)
+        self.words = pd.concat([self.words, row]).reset_index(drop=True)
 
     def play(self):
         while True:
             os.system('clear')
-            row = self.df.sample(1).iloc[0]
+            row = self.words.sample(1).iloc[0]
             
-            input(f'{row.LANGUAGE_A} (enter to see answer)')
+            input(f'{row[LANGUAGE_A]} (enter to answer)')
 
-            print(f'{row.LANGUAGE_A} -> {row.translation} \n')
+            print(f'{row[LANGUAGE_A]} -> {row[LANGUAGE_B]} \n')
             self.menu(MENU_GUESS)
             answer = input('answer: ')
             
-            self.df.loc[row.name, 'last_try'] = pd.Timestamp.now().as_unit('s')
+            self.user.set_index('id', inplace=True)
+            self.user.loc[row.id, 'last_try'] = pd.Timestamp.now().as_unit('s')
+            self.user.fillna(0, inplace=True)
             if answer == '1':
-                self.df.loc[row.name, 'success'] += 1
+                previous = self.user.loc[row.id, 'success']
+                self.user.loc[row.id, 'success'] = previous + 1
                 break
             elif answer == '2':
-                self.df.loc[row.name, 'fail'] = 1
+                previous = self.user.loc[row.id, 'fail']
+                self.user.loc[row.id, 'fail'] = previous + 1
                 break
+        
+        self.user.reset_index(inplace=True)
 
     def delete(self):
         pass
@@ -91,7 +102,8 @@ class FlashCard:
     def main(self):
         while True:
             os.system('clear')
-            print(self.df[[LANGUAGE_A, LANGUAGE_B]], '\n')
+            print(self.words.columns)
+            print(self.words[[LANGUAGE_A, LANGUAGE_B]], '\n')
             self.menu(MENU_HOME)
             input1 = input()
 

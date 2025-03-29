@@ -58,10 +58,14 @@ class FlashCard:
         word = input('word: ')
         word = word.lower()
         if word in self.words[LANGUAGE_A].unique():
-            print('Attention le mot existe déjà')
+            print('\n', self.words[(self.words[LANGUAGE_A] == word)][[LANGUAGE_A, LANGUAGE_B]])
 
         translation = asyncio.run(translate_text(word))
-        translation = input(translation.text) or translation.text
+        print('\n', f'add: "{word} -> {translation.text}"?')
+        translation = input('or write new here (n to cancel)') or translation.text
+
+        if translation == 'n':
+            return
 
         row = pd.Series({
             'id': uuid4(),

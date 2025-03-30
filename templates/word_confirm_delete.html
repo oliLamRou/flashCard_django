@@ -1,0 +1,7 @@
+<h1>Delete Word</h1>
+<p>Are you sure you want to delete "{{ word.french }} - {{ word.korean }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, delete</button>
+</form>
+<a href="{% url 'word-list' %}">Cancel</a>

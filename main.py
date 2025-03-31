@@ -82,12 +82,8 @@ class FlashCard:
 
         while True:
             os.system('clear')
-            '''
-                sample all first timer
-                get 10% of positive ratio
-                get 50% of negative ratio
-                random pick one
-            '''
+
+            #Randomizor
             unguessed = self.words[~(self.words['id'].isin(self.user.index))]
             
             positive_id = self.user[(self.user['success'] > self.user['fail'])].sample(frac=0.1).index
@@ -98,23 +94,29 @@ class FlashCard:
 
             words = pd.concat([unguessed, positive, negative])            
             
+            #This is weird
             if words['id'].size < 1:
                 words = self.words
                 
+            #Get a word
             row = words.sample(1).iloc[0]
 
+            #Stats
             if row.id in self.user.index:
-                # print(self.user.loc[row.id, 'fail'])
                 print(f"failed: {self.user.loc[row.id, 'fail']} // success: {self.user.loc[row.id, 'success']}")
             else: 
-                print('new word')
+                print('Nouveau mot: ')
+            
+            #Word to guess
+            input(f'{row[LANGUAGE_A]} (enter to see {LANGUAGE_B})')
 
-            input(f'{row[LANGUAGE_A]} (enter to answer)')
+            #Word match in both language
+            matchs = self.words[(self.words[LANGUAGE_A] == row[LANGUAGE_A])]
+            print(f'\n{matchs[[LANGUAGE_A, LANGUAGE_B]]}\n')
 
-            print(f'{row[LANGUAGE_A]} -> {row[LANGUAGE_B]} \n')
+            #Menu and logic
             self.menu(MENU_GUESS)
             answer = input('answer: ')
-            
             
             self.user.loc[row.id, 'last_try'] = pd.Timestamp.now().as_unit('s')
             self.user.fillna(0, inplace=True)

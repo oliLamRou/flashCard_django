@@ -86,10 +86,10 @@ class FlashCard:
             #Randomizor
             unguessed = self.words[~(self.words['id'].isin(self.user.index))]
             
-            positive_id = self.user[(self.user['success'] > self.user['fail'])].sample(frac=0.1).index
+            positive_id = self.user[(self.user['success'] > self.user['fail'])].sample(frac=0.01).index
             positive = self.words[(self.words['id'].isin(positive_id))]
             
-            negative_id = self.user[(self.user['fail'] > self.user['success'])].sample(frac=0.3).index
+            negative_id = self.user[(self.user['fail'] > self.user['success'])].sample(frac=0.1).index
             negative = self.words[(self.words['id'].isin(negative_id))]
 
             words = pd.concat([unguessed, positive, negative])            

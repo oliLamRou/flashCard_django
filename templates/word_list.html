@@ -1,0 +1,12 @@
+<h1>Word List</h1>
+<a href="{% url 'word-create' %}">Add New Word</a>
+<a href="{% url 'home' %}">home</a>
+<ul>
+    {% for word in words %}
+        <li>
+            {{ word.french }} - {{ word.korean }}
+            <a href="{% url 'word-update' word.pk %}">Edit</a>
+            <a href="{% url 'word-delete' word.pk %}">Delete</a>
+        </li>
+    {% endfor %}
+</ul>

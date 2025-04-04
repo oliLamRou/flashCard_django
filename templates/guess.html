@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess</title>
+    <a href="{% url 'home' %}">home</a>
+    <script>
+        function toggleValue() {
+            var valueElementWord = document.getElementById("hiddenValue");
+            var valueElementCheck = document.getElementById("hiddenButtonCheck");
+            var valueElementButton = document.getElementById("hiddenButton");
+            if (valueElementWord.style.display === "none") {
+                valueElementWord.style.display = "inline";
+                valueElementCheck.style.display = "none";
+                valueElementButton.style.display = "inline";
+            }
+        }
+        function sendFeedback(answer) {
+            const url = document.getElementById('newWord').href;
+            const word_id = document.getElementById('wordID').value
+
+            fetch("score/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": getCSRFToken()  // Get CSRF token for security
+                },
+                body: "answer=" + answer + '&wordID=' + word_id
+            })
+            .then(window.location.href = url)
+        }
+
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }        
+    </script>
+</head>
+<body>
+    <form method="post"> {% csrf_token %}</form>
+    <a id="newWord" href="{% url 'guess' %}" style="display: none;"></a>
+    <input type="hidden" id="wordID" value="{{ word.id }}"/>
+    <div>
+        <span>{{ word.french }}</span>
+        <span id="hiddenValue" style="display: none;">{{ word.korean }}</span>
+    </div>
+    <div id="hiddenButtonCheck" style="display: inline;">
+        <button onclick="toggleValue()">Reveal Value</button>
+    </div>
+    <div id="hiddenButton" style="display: none;">
+        <button onclick="sendFeedback('good')">Good</button>
+        <button onclick="sendFeedback('bad')">Bad</button>
+    </div>
+</body>
+</html>

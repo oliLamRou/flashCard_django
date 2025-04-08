@@ -57,6 +57,8 @@ def score(request):
         elif answer == 'good':
             score_entry.success += 1
 
+        score_entry.save()
+
         print(f'New Score for: {score_entry.word.french} fail: {score_entry.fail} success: {score_entry.success}')
         return HttpResponse(status=200)
 

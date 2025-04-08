@@ -4,4 +4,4 @@ from dictionary.models import Word
 class WordForm(forms.ModelForm):
     class Meta:
         model = Word
-        fields = ['french', 'korean']
+        fields = ['french', 'korean', 'word_class']

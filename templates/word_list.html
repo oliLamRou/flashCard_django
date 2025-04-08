@@ -1,12 +1,28 @@
 <h1>Word List</h1>
 <a href="{% url 'word-create' %}">Add New Word</a>
 <a href="{% url 'home' %}">home</a>
-<ul>
+<table>
+    <tr>
+        <th>French</th>
+        <th>Korean</th>
+        <th>Word Class</th>
+        <th>Fail</th>
+        <th>Success</th>
+        <th>Options</th>
+    </tr>
     {% for word in words %}
-        <li>
-            {{ word.french }} - {{ word.korean }}
-            <a href="{% url 'word-update' word.pk %}">Edit</a>
-            <a href="{% url 'word-delete' word.pk %}">Delete</a>
-        </li>
+    {% with word.score_set.first as score %}
+        <tr>
+            <td>{{ word.french }}</td>
+            <td>{{ word.korean }}</td>
+            <td>{{ word.word_class }}</td>
+            <td>{{ score.fail }}</td>
+            <td>{{ score.success }}</td>
+            <td>
+                <a href="{% url 'word-update' word.pk %}">Edit</a>
+                <a href="{% url 'word-delete' word.pk %}">Delete</a>
+            </td>
+        </tr>
+    {% endwith %}
     {% endfor %}
-</ul>
+</table>

@@ -14,7 +14,7 @@ def create(request):
     return render(request, 'word_form.html', {'form': form})
 
 def read(request):
-    words = Word.objects.all()
+    words = Word.objects.all().order_by('french')
     return render(request, 'word_list.html', {'words': words})
 
 def update(request, pk):

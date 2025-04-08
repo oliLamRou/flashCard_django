@@ -15,12 +15,8 @@ def get_some_querySet(querySet, perc=1):
     return queryList[:amount]
 
 def guess(request):
-    #Get all words that never been seen
-    #Get 1% of word that are good > bad
-    #Get 5% of word that are bad > good
-    #Get 10% of last_try > 1 month
-
-    #Choose 1 word in those above
+    WORDS_GOOD_PERC = 0.01
+    WORDS_BAD_PERC = 0.05
 
     #New
     words_without_score = Word.objects.filter(score__isnull=True).order_by("?")
@@ -32,8 +28,8 @@ def guess(request):
 
     #Get all or some query
     words_without_score_list = get_some_querySet(words_without_score)
-    words_good_list = get_some_querySet(words_good, 0.01)
-    words_bad_list = get_some_querySet(words_bad, 0.05)
+    words_good_list = get_some_querySet(words_good, WORDS_GOOD_PERC)
+    words_bad_list = get_some_querySet(words_bad, WORDS_BAD_PERC)
 
     #Combien and shuffle
     word_list = words_without_score_list + words_good_list + words_bad_list
@@ -42,7 +38,10 @@ def guess(request):
 
     print(f'Guess New Word: {word.french}')
 
-    return render(request, "guess.html", {"word": word})
+    otherWord = Word.objects.filter(french=word.french) #.exclude(korean=word.korean)
+    print(otherWord)
+
+    return render(request, "guess.html", {"word": word, "otherWord": otherWord})
 
 def score(request):
     if request.method == "POST":

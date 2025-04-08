@@ -7,8 +7,19 @@
     - ~add score bad or success~
 
 - UX
-    - home, words, learn
-    - learn auto random new word after score
+    - ~home, words, learn~
+    - ~learn auto random new word after score~
+
+ - features
+    - ~list answer of all possibility~
+        - having good for specific option ?
+        - word type is important and could remove some confusion: ADV, noun, verb particule ...
+    - personal note ?
+    - word list with stats and can see group by
+        group by new old, good bad, type...
+    - word to speak ?
+    - save good bad word from current session. repeat till all good ?
+        - maybe better to get 20 and clear the stack ?
 
 
 # phase 2

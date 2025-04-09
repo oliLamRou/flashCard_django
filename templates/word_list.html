@@ -3,6 +3,7 @@
 <a href="{% url 'home' %}">home</a>
 <table>
     <tr>
+        <th>User</th>
         <th>French</th>
         <th>Korean</th>
         <th>Word Class</th>
@@ -11,8 +12,9 @@
         <th>Options</th>
     </tr>
     {% for word in words %}
-    {% with word.score_set.first as score %}
+    {% with word.user_scores.0 as score %}
         <tr>
+            <td>{{ word.user }}</td>
             <td>{{ word.french }}</td>
             <td>{{ word.korean }}</td>
             <td>{{ word.word_class }}</td>

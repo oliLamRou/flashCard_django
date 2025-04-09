@@ -1,4 +1,10 @@
 # ToDo
+- Setup switch to use local or render db
+- setup superuser in both
+- sign up and sign in page
+- how to check if log in?
+- redirect if not log in ?
+
 - DB word
     - ~CRUD words in 2 language~
 

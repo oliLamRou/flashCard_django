@@ -1,6 +1,7 @@
 <h1>Home</h1>
 <a href="{% url 'word-list' %}">Word List</a>
 <a href="{% url 'guess' %}">Learn</a>
+<a href="{% url 'preference' %}">Preference</a>
 <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
     <button type="submit">Logout</button>

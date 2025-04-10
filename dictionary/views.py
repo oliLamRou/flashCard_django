@@ -7,23 +7,25 @@ from dictionary.forms import WordForm
 
 from learn.models import Score
 
+from accounts.models import Preference
+
 @login_required
 def create(request):
     if request.method == 'POST':
-        form = WordForm(request.POST)
+        form = WordForm(request.POST, user=request.user)
         if form.is_valid():
             word = form.save(commit=False)
             word.user = request.user
             word.save()
             return redirect('word-list')
     else:
-        form = WordForm()
+        form = WordForm(user=request.user)
     
     return render(request, 'word_form.html', {'form': form})
 
 @login_required
 def read(request):
-    # words = Word.objects.all().order_by('french')
+    preference = Preference.objects.filter(user=request.user).first()
     words = Word.objects.prefetch_related(
         Prefetch(
             'scores',
@@ -31,18 +33,18 @@ def read(request):
             to_attr='user_scores'  # so you can access it easily
         )
     )
-    return render(request, 'word_list.html', {'words': words})
+    return render(request, 'word_list.html', {'words': words, 'preference': preference})
 
 @login_required
 def update(request, pk):
     word = get_object_or_404(Word, pk=pk)
     if request.method == 'POST':
-        form = WordForm(request.POST, instance=word)
+        form = WordForm(request.POST, instance=word, user=request.user)
         if form.is_valid():
             form.save()
             return redirect('word-list')
     else:
-        form = WordForm(instance=word)
+        form = WordForm(instance=word, user=request.user)
     return render(request, 'word_form.html', {'form': form})
 
 @login_required

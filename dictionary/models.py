@@ -20,6 +20,7 @@ class Word(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='words')
     french = models.CharField(max_length=100)
     korean = models.CharField(max_length=100)
+    english = models.CharField(max_length=100, blank=True)
     description = models.TextField(default='')
     word_class = models.CharField(max_length=20, choices=WORD_CLASS, default=WORD_CLASS.UNDF)
     create_at = models.DateField(auto_now_add=True)

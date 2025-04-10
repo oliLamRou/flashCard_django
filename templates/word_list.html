@@ -4,8 +4,8 @@
 <table>
     <tr>
         <th>User</th>
-        <th>French</th>
-        <th>Korean</th>
+        <th>{{ preference.get_languageA_display }}</th>
+        <th>{{ preference.get_languageB_display }}</th>
         <th>Word Class</th>
         <th>Fail</th>
         <th>Success</th>
@@ -15,8 +15,28 @@
     {% with word.user_scores.0 as score %}
         <tr>
             <td>{{ word.user }}</td>
-            <td>{{ word.french }}</td>
-            <td>{{ word.korean }}</td>
+            <td>
+                {% if preference.languageA == 'FR' %}
+                    {{ word.french }}
+                {% elif preference.languageA == 'KR' %}
+                    {{ word.korean }}
+                {% elif preference.languageA == 'EN' %}
+                    {{ word.english }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if preference.languageB == 'FR' %}
+                    {{ word.french }}
+                {% elif preference.languageB == 'KR' %}
+                    {{ word.korean }}
+                {% elif preference.languageB == 'EN' %}
+                    {{ word.english }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
             <td>{{ word.word_class }}</td>
             <td>{{ score.fail }}</td>
             <td>{{ score.success }}</td>

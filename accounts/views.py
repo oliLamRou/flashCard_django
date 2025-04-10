@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout
-from django.contrib.auth.views import LoginView, LogoutView
-from accounts.forms import RegisterForm
+from django.contrib.auth import login
+from accounts.forms import RegisterForm, PreferenceForm
 
 # Create your views here.
 def register_view(request):
@@ -16,3 +15,18 @@ def register_view(request):
         form = RegisterForm()
         
     return render(request, 'register.html', {'form': form})
+
+def preference_view(request):
+    if request.method == 'POST':
+        form = PreferenceForm(request.POST)
+        print(request.POST)
+        if form.is_valid():
+            pref = form.save(commit=False)
+            pref.user = request.user
+            pref.save()
+            return redirect('home')
+
+    else:
+        form = PreferenceForm()
+
+    return render(request, 'preference.html', {'form': form})

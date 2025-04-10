@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -16,11 +17,15 @@ class Word(models.Model):
         INTERJECTION = 'INTJ',
         NUMERAL = 'NUM',
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='words')
     french = models.CharField(max_length=100)
     korean = models.CharField(max_length=100)
     description = models.TextField(default='')
     word_class = models.CharField(max_length=20, choices=WORD_CLASS, default=WORD_CLASS.UNDF)
     create_at = models.DateField(auto_now_add=True)
+
+    def get_score_for(self, user):
+        return self.score.filter(user=user).first()
 
 '''
 noun	명사	[myeong-sa]

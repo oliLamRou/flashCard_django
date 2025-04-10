@@ -19,12 +19,12 @@ def guess(request):
     WORDS_BAD_PERC = 0.05
 
     #New
-    words_without_score = Word.objects.filter(score__isnull=True).order_by("?")
+    words_without_score = Word.objects.filter(scores__isnull=True).order_by("?")
     
     #Score
-    words_with_score = Word.objects.filter(score__isnull=False)
-    words_good = words_with_score.filter(score__success__gt=F('score__fail'))
-    words_bad = words_with_score.filter(score__success__lte=F('score__fail'))
+    words_with_score = Word.objects.filter(scores__isnull=False)
+    words_good = words_with_score.filter(scores__success__gt=F('scores__fail'))
+    words_bad = words_with_score.filter(scores__success__lte=F('scores__fail'))
 
     #Get all or some query
     words_without_score_list = get_some_querySet(words_without_score)
@@ -39,7 +39,6 @@ def guess(request):
     print(f'Guess New Word: {word.french}')
 
     otherWord = Word.objects.filter(french=word.french) #.exclude(korean=word.korean)
-    print(otherWord)
 
     return render(request, "guess.html", {"word": word, "otherWord": otherWord})
 
@@ -50,7 +49,8 @@ def score(request):
         word_id = request.POST.get("wordID")
 
         word = get_object_or_404(Word, id=word_id)
-        score_entry, created = Score.objects.get_or_create(word=word)
+        score_entry, created = Score.objects.get_or_create(word=word, user=request.user)
+        print("CREATE:", created)
         
         if answer == 'bad':
             score_entry.fail += 1

@@ -18,6 +18,9 @@ class Word(models.Model):
         NUMERAL = 'NUM',
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='words')
+    FR = models.CharField(max_length=100, blank=True)
+    KR = models.CharField(max_length=100, blank=True)
+    EN = models.CharField(max_length=100, blank=True)
     french = models.CharField(max_length=100)
     korean = models.CharField(max_length=100)
     english = models.CharField(max_length=100, blank=True)

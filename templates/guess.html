@@ -1,4 +1,4 @@
-
+{% load dict_extras %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,12 +43,23 @@
     <a id="newWord" href="{% url 'guess' %}" style="display: none;"></a>
     <input type="hidden" id="wordID" value="{{ word.id }}"/>
     <div>
-        <span>{{ word.french }}</span>
+        <h1>{{ preference.learnMode}}</h1>
+        <span>
+            {% if preference.learnMode == 'NORMAL' %}
+                {{ word|getattr_dynamic:preference.languageA }}
+            {% else %}
+                {{ word|getattr_dynamic:preference.languageB }}
+            {% endif %}
+        </span>
         <div id="hiddenValue" style="display: none;">
             <ul>
                 {% for word in otherWord %}
                     <li>
-                        {{ word.korean }}
+                        {% if preference.learnMode == 'NORMAL' %}
+                            {{ word|getattr_dynamic:preference.languageB }}
+                        {% else %}
+                            {{ word|getattr_dynamic:preference.languageA }}
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>

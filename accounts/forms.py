@@ -14,4 +14,4 @@ class RegisterForm(UserCreationForm):
 class PreferenceForm(forms.ModelForm):
     class Meta:
         model = Preference
-        fields = ['languageA', 'languageB']
+        fields = ['languageA', 'languageB', 'learnMode']

@@ -26,6 +26,7 @@ def create(request):
 @login_required
 def read(request):
     preference = Preference.objects.filter(user=request.user).first()
+
     words = Word.objects.prefetch_related(
         Prefetch(
             'scores',
@@ -33,6 +34,7 @@ def read(request):
             to_attr='user_scores'  # so you can access it easily
         )
     )
+
     return render(request, 'word_list.html', {'words': words, 'preference': preference})
 
 @login_required

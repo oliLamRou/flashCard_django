@@ -17,22 +17,22 @@
             <td>{{ word.user }}</td>
             <td>
                 {% if preference.languageA == 'FR' %}
-                    {{ word.french }}
+                    {{ word.FR }}
                 {% elif preference.languageA == 'KR' %}
-                    {{ word.korean }}
+                    {{ word.KR }}
                 {% elif preference.languageA == 'EN' %}
-                    {{ word.english }}
+                    {{ word.EN }}
                 {% else %}
                     N/A
                 {% endif %}
             </td>
             <td>
                 {% if preference.languageB == 'FR' %}
-                    {{ word.french }}
+                    {{ word.FR }}
                 {% elif preference.languageB == 'KR' %}
-                    {{ word.korean }}
+                    {{ word.KR }}
                 {% elif preference.languageB == 'EN' %}
-                    {{ word.english }}
+                    {{ word.EN }}
                 {% else %}
                     N/A
                 {% endif %}

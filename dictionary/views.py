@@ -24,18 +24,6 @@ def create(request):
     return render(request, 'word_form.html', {'form': form})
 
 @login_required
-def read(request):
-    preference = Preference.objects.filter(user=request.user).first()
-    words = Word.objects.prefetch_related(
-        Prefetch(
-            'scores',
-            queryset=Score.objects.filter(user=request.user),
-            to_attr='user_scores'  # so you can access it easily
-        )
-    )
-    return render(request, 'word_list.html', {'words': words, 'preference': preference})
-
-@login_required
 def update(request, pk):
     word = get_object_or_404(Word, pk=pk)
     if request.method == 'POST':
@@ -46,6 +34,30 @@ def update(request, pk):
     else:
         form = WordForm(instance=word, user=request.user)
     return render(request, 'word_form.html', {'form': form})
+
+@login_required
+def read(request):
+    preference = Preference.objects.filter(user=request.user).first()
+
+    words = (
+        Word.objects
+        .prefetch_related(
+           Prefetch(
+                'scores',
+                queryset=Score.objects.filter(user=request.user),
+                to_attr='user_scores'  # so you can access it easily
+            )
+        )
+        .exclude(**{f"{preference.languageA}__isnull": True})
+        .exclude(**{f"{preference.languageA}": ''})
+        .exclude(**{f"{preference.languageB}__isnull": True})
+        .exclude(**{f"{preference.languageB}": ''})
+    )
+
+    for word in words:
+        print(word.FR, word.KR, word.EN)
+
+    return render(request, 'word_list.html', {'words': words, 'preference': preference})
 
 @login_required
 def delete(request, pk):

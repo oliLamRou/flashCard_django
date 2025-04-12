@@ -72,6 +72,7 @@ def guess(request):
     return render(request, "guess.html", {"word": word, "otherWord": otherWord, "preference": preference})
 
 def score(request):
+    print("ININININI")
     if request.method == "POST":
         print(f'request: {request.POST}')
         answer = request.POST.get("answer")
@@ -81,9 +82,9 @@ def score(request):
         score_entry, created = Score.objects.get_or_create(word=word, user=request.user)
         print("CREATE:", created)
         
-        if answer == 'bad':
+        if answer == 'fail':
             score_entry.fail += 1
-        elif answer == 'good':
+        elif answer == 'success':
             score_entry.success += 1
 
         score_entry.save()

@@ -21,7 +21,8 @@ def guess(request):
 
     preference = Preference.objects.filter(user=request.user).first()
     lang_from = preference.languageA if preference.learnMode == preference.LEARN_MODE.normal else preference.languageB
-    lang_to = preference.languageB if lang_from == preference.languageA else preference.languageA
+    # lang_to = preference.languageB if lang_from == preference.languageA else preference.languageA
+    lang_to = preference.languageB if preference.learnMode == 'NORMAL' else preference.languageA
 
     #New
     words_without_score = (
@@ -62,7 +63,7 @@ def guess(request):
     #This is like : filter(FR=word.FR)
     otherWord = (
         Word.objects
-        .filter(**{f'{lang_from}': getattr(word, lang_from)})
+        .filter(**{f'{lang_to}': getattr(word, lang_to)})
         .exclude(**{f"{preference.languageA}__isnull": True})
         .exclude(**{f"{preference.languageA}": ''})
         .exclude(**{f"{preference.languageB}__isnull": True})

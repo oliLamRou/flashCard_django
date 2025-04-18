@@ -61,11 +61,13 @@ def read(request):
 
 @login_required
 def delete(request, pk):
+    preference = Preference.objects.filter(user=request.user).first()
+
     word = get_object_or_404(Word, pk=pk)
     if request.method == 'POST':
         word.delete()
         return redirect('word-list')
-    return render(request, 'word_confirm_delete.html', {'word': word})
+    return render(request, 'word_confirm_delete.html', {'word': word, 'preference': preference})
 
 
 

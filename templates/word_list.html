@@ -1,3 +1,4 @@
+{% load dict_extras %}
 <h1>Word List</h1>
 <a href="{% url 'word-create' %}">Add New Word</a>
 <a href="{% url 'home' %}">home</a>
@@ -15,28 +16,8 @@
     {% with word.user_scores.0 as score %}
         <tr>
             <td>{{ word.user }}</td>
-            <td>
-                {% if preference.languageA == 'FR' %}
-                    {{ word.FR }}
-                {% elif preference.languageA == 'KR' %}
-                    {{ word.KR }}
-                {% elif preference.languageA == 'EN' %}
-                    {{ word.EN }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </td>
-            <td>
-                {% if preference.languageB == 'FR' %}
-                    {{ word.FR }}
-                {% elif preference.languageB == 'KR' %}
-                    {{ word.KR }}
-                {% elif preference.languageB == 'EN' %}
-                    {{ word.EN }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </td>
+            <td>{{ word|getattr_dynamic:preference.languageA }}</td>
+            <td>{{ word|getattr_dynamic:preference.languageB }}</td>
             <td>{{ word.word_class }}</td>
             <td>{{ score.fail }}</td>
             <td>{{ score.success }}</td>

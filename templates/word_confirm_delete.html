@@ -1,5 +1,6 @@
+{% load dict_extras %}
 <h1>Delete Word</h1>
-<p>Are you sure you want to delete "{{ word.french }} - {{ word.korean }}"?</p>
+<p>Are you sure you want to delete "{{ word|getattr_dynamic:preference.languageA }} - {{ word|getattr_dynamic:preference.languageB }}"?</p>
 <form method="post">
     {% csrf_token %}
     <button type="submit">Yes, delete</button>

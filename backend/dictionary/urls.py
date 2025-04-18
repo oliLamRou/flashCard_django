@@ -7,5 +7,4 @@ urlpatterns = [
     path('', read, name='word-list'),
     path('<int:pk>/edit/', update, name='word-update'),
     path('<int:pk>/delete/', delete, name='word-delete'),
-
 ]

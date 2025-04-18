@@ -1,3 +1,11 @@
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+
+# from django.contrib.auth.decorators import login_required
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+
 from django.db.models import Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -9,7 +17,8 @@ from learn.models import Score
 
 from accounts.models import Preference
 
-@login_required
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create(request):
     if request.method == 'POST':
         form = WordForm(request.POST, user=request.user)
@@ -21,7 +30,8 @@ def create(request):
     else:
         form = WordForm(user=request.user)
     
-    return render(request, 'word_form.html', {'form': form})
+    # return render(request, 'word_fo rm.html', {'form': form})
+    return Response({'form': form})
 
 @login_required
 def update(request, pk):

@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'learn',
     'dictionary',
     'home',
-    'accounts'
+    'accounts',
+    #'rest_framework'
 ]
 
 MIDDLEWARE = [

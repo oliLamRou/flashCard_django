@@ -18,11 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
 
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('accounts.urls')),
-    path('learn/', include('learn.urls')),
+    path('api/auth/', include('accounts.urls')),
+    path('api/learn/', include('learn.urls')),
     path('home/', include('home.urls')),
-    path('dictionary/', include('dictionary.urls')),
-    path('', lambda request: redirect('/home/'))
+    path('api/dictionary/', include('dictionary.urls')),
+    path('', lambda request: redirect('/home/')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

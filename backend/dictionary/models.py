@@ -3,29 +3,26 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class Word(models.Model):
+class Word(models.Model):    
     class WORD_CLASS(models.TextChoices):
-        UNDF = 'UNDEFINE',
-        NOUN = 'NOUN',
-        VERB = 'VERB',
-        ADJECTIVE = 'ADJ',
-        PRONOUN = 'PRON',
-        ADVERB = 'ADV',
-        ENDING = 'END',
-        PARTICULE = 'PART',
-        DETERMINER = 'DET',
-        INTERJECTION = 'INTJ',
-        NUMERAL = 'NUM',
+        UNDEFINE = 'undef', 'undefine',
+        NOUN = 'n', 'noun',
+        VERB = 'v', 'verb',
+        ADJECTIVE = 'adj', 'adjective',
+        PRONOUN = 'pron', 'pronon',
+        ADVERB = 'adv', 'adverb',
+        ENDING = 'suff', 'ending',
+        PARTICULE = 'part', 'particule',
+        DETERMINER = 'det', 'determiner',
+        INTERJECTION = 'int', 'interjection',
+        NUMERAL = 'num', 'numeral',
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='words')
     FR = models.CharField(max_length=100, blank=True)
     KR = models.CharField(max_length=100, blank=True)
     EN = models.CharField(max_length=100, blank=True)
-    french = models.CharField(max_length=100)
-    korean = models.CharField(max_length=100)
-    english = models.CharField(max_length=100, blank=True)
-    description = models.TextField(default='')
-    word_class = models.CharField(max_length=20, choices=WORD_CLASS, default=WORD_CLASS.UNDF)
+    description = models.TextField(default='', blank=True)
+    word_class = models.CharField(max_length=20, choices=WORD_CLASS, default=WORD_CLASS.UNDEFINE)
     create_at = models.DateField(auto_now_add=True)
 
     def get_score_for(self, user):

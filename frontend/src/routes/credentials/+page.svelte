@@ -1,10 +1,11 @@
 <script>
     import { goto } from "$app/navigation";
+	import { api } from "$lib";
     let username = ''
     let password = ''
 
     const login = async () => {
-        const response = await fetch("http://localhost:8000/api/token/", {
+        const response = await api('token/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -14,6 +15,8 @@
                 password,
             })
         })
+        // const response = await fetch("http://localhost:8000/api/token/", {
+        // })
         
         const data = await response.json();
 

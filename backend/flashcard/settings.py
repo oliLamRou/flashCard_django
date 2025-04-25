@@ -10,10 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 import dj_database_url
-from dotenv import dotenv_values
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -66,7 +69,9 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    dotenv_values()['DEV_ORIGIN'],
+    'http://localhost:5173',
+    'https://flash-card-django.vercel.app',
+    'https://flash-card-django-c8y6ninbl-olilamrous-projects.vercel.app'
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
@@ -96,7 +101,7 @@ WSGI_APPLICATION = 'flashcard.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default=dotenv_values()['PSQL_LOCAL_DB'],
+        default=os.getenv("PSQL_LOCAL_DB", ""),
         conn_max_age=600
     )
 }

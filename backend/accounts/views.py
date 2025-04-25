@@ -1,3 +1,5 @@
+from django.contrib.auth import logout
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import Response
@@ -35,3 +37,7 @@ def preferences(request):
         
         else:
             return Response(500)
+        
+def logout_user(request):
+    logout(request.user)
+    return Response(status=200)

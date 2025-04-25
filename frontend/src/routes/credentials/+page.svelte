@@ -15,8 +15,6 @@
                 password,
             })
         })
-        // const response = await fetch("http://localhost:8000/api/token/", {
-        // })
         
         const data = await response.json();
 

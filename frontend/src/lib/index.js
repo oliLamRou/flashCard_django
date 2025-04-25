@@ -1,5 +1,11 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+export function removeTokens() {
+    console.log("Removing Tokens")
+    localStorage.removeItem('access')
+    localStorage.removeItem('refresh')
+}
+
 export async function refreshToken() {
     const refresh = localStorage.getItem('refresh');
     const response = await fetch(BASE_URL + 'token/refresh/', {
@@ -14,8 +20,7 @@ export async function refreshToken() {
         return true;
     } else {
         // Refresh token failed (maybe expired)
-        localStorage.removeItem('access');
-        localStorage.removeItem('refresh');
+        removeTokens()
         return false;
     }
 }

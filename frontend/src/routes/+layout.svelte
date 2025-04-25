@@ -1,12 +1,22 @@
 <script>
+	import { onMount } from "svelte";
     import "../app.css";
+	import { goto } from "$app/navigation";
+	import { refreshToken, removeTokens } from "$lib";
     let { children } = $props();
+
+    onMount(() => {
+        goto('/words')
+    })
+
+    const logout = () => {
+        removeTokens()
+        goto('/credentials')
+    }
+
 </script>
 
 <div class="navbar bg-base-100 shadow-sm">
-    <div class="flex-1">
-      <a href="/words" class="btn btn-ghost text-xl">Home</a>
-    </div>
     <div class="flex-1">
         <a href="/words" class="btn btn-ghost text-xl">Words</a>
     </div>
@@ -17,7 +27,7 @@
         <a href="/preferences" class="btn btn-ghost text-xl">Preferences</a>
     </div>
     <div class="flex-1">
-        <a href="/credentials" class="btn btn-ghost text-xl">Logout</a>
+        <button onclick={logout} class="btn btn-ghost text-xl">Logout</button>
     </div>
 </div>
 

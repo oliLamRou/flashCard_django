@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-    import { api } from "$lib";
+    import { api, refreshToken } from "$lib";
 	import { goto } from "$app/navigation";
 
     let preferences = $state({
@@ -13,7 +13,12 @@
     let languageB = $state('')
     let learnMode = $state('')
 
-    onMount(() => {
+    onMount(async() => {
+        const isUser = await refreshToken()
+        if (!isUser){
+            goto('/credentials')
+        }
+
         load()
     })
 

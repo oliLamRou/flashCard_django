@@ -1,8 +1,9 @@
 <script>
-	import { api } from "$lib";
+	import { api, refreshToken } from "$lib";
 	import { onMount } from "svelte";
 
     import { page } from "$app/stores";
+	import { goto } from "$app/navigation";
 
     let word_modal = $state()
 
@@ -20,6 +21,11 @@
     let description = $state('')
 
     onMount(async() => {
+        const isUser = await refreshToken()
+        if (!isUser){
+            goto('/credentials')
+        }
+        
         await load_preference()
         await load_word_classes()
         load_word()
@@ -81,6 +87,7 @@
 
         if (response.ok) {
             console.log(response)
+            goto('/words')
         }
     }
 

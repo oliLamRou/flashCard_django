@@ -1,5 +1,6 @@
 <script>
-	import { api } from "$lib";
+	import { goto } from "$app/navigation";
+	import { api, refreshToken } from "$lib";
 	import steps from "daisyui/components/steps";
 	import { onMount } from "svelte";
 
@@ -7,7 +8,12 @@
     let preferences = $state({})
     let word = $state({})
 
-    onMount(() => {
+    onMount(async() => {
+        const isUser = await refreshToken()
+        if (!isUser){
+            goto('/credentials')
+        }
+        
         load()
     })
 
@@ -21,26 +27,28 @@
             
             Object.assign(preferences, data.preferences)
             Object.assign(word, data.word)
-            console.log(data)
         }
-
 
         return response
     }
 
-    const update = (score) => {
+    const update = async(score) => {
         const data = {
             id: word.id,
             score: score
         }
 
-        const response = api('learn/score/', {
+        const response = await api('learn/score/', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json'
             },
         })
+
+        if (response.ok) {
+            load()
+        }
     }
 
 </script>

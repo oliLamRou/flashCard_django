@@ -71,7 +71,8 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'https://flash-card-django.vercel.app',
-    'https://flash-card-django-c8y6ninbl-olilamrous-projects.vercel.app'
+    'https://flash-card-django-main-olilamrous-projects.vercel.app',
+    'https://flash-card-django-production-olilamrous-projects.vercel.app',
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False

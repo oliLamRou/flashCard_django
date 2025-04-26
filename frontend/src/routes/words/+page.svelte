@@ -1,13 +1,18 @@
 <script>
     import { onMount } from "svelte";
-    import { api } from "$lib";
+    import { api, refreshToken } from "$lib";
 	import { goto } from "$app/navigation";
 
     let words = $state()
     let preference = $state()
     let word_classes = $state({})
             
-    onMount(() => {
+    onMount(async() => {
+        const isUser = await refreshToken()
+        if (!isUser){
+            goto('/credentials')
+        }
+
         load_word_classes()
         load()
     })

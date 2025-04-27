@@ -3,7 +3,7 @@ import { goto } from "$app/navigation";
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 async function getCSRF() {
-    await fetch('http://localhost:8000/api/auth/csrf/', {
+    await fetch(BASE_URL + 'auth/csrf/', {
         method: 'GET',
         credentials: 'include'
     });
@@ -17,7 +17,7 @@ function getCookie(name) {
 }
 
 export async function login(username, password) {
-    // await getCSRF(); // make sure CSRF is set
+    await getCSRF(); // make sure CSRF is set
 
     const response = await api('auth/login/', {
         method: 'POST',

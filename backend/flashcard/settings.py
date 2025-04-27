@@ -78,7 +78,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_NAME = "sessionid"  # Default name
 SESSION_COOKIE_SECURE = True      # Only over HTTPS
 SESSION_COOKIE_HTTPONLY = True     # JS can't access
-SESSION_COOKIE_SAMESITE = "Strict" # Protect from CSRF
+SESSION_COOKIE_SAMESITE = "None" # Protect from CSRF
 
 #SESSION_COOKIE_SAMESITE & CSRF_COOKIE_SAMESITE
 #which is good for security, but if you have issues cross-site later (e.g., Vercel frontend, Render backend), you might eventually change SameSite to "Lax" or "None" (but Strict is fine for localhost testing for now.
@@ -86,7 +86,7 @@ SESSION_COOKIE_SAMESITE = "Strict" # Protect from CSRF
 # CSRF cookie settings
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = False  # CSRF token must be readable by frontend (JS must read it)
-CSRF_COOKIE_SAMESITE = "Strict"
+CSRF_COOKIE_SAMESITE = "None"
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",

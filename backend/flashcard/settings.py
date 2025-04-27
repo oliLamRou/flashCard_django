@@ -92,15 +92,11 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "https://flash-card-django.vercel.app",
     "https://flash-card-django-main-olilamrous-projects.vercel.app",
+    "https://flash-card-django-git-main-olilamrous-projects.vercel.app",
     "https://flash-card-django-production-olilamrous-projects.vercel.app",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'https://flash-card-django.vercel.app',
-    'https://flash-card-django-main-olilamrous-projects.vercel.app',
-    'https://flash-card-django-production-olilamrous-projects.vercel.app',
-]
+CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS.copy()
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 

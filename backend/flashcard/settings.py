@@ -63,10 +63,37 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
+        'rest_framework.authentication.SessionAuthentication',
+    ],
 }
+
+# Use signed cookies for session storage
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
+# Security settings for the cookie
+SESSION_COOKIE_NAME = "sessionid"  # Default name
+SESSION_COOKIE_SECURE = True      # Only over HTTPS
+SESSION_COOKIE_HTTPONLY = True     # JS can't access
+SESSION_COOKIE_SAMESITE = "Strict" # Protect from CSRF
+
+#SESSION_COOKIE_SAMESITE & CSRF_COOKIE_SAMESITE
+#which is good for security, but if you have issues cross-site later (e.g., Vercel frontend, Render backend), you might eventually change SameSite to "Lax" or "None" (but Strict is fine for localhost testing for now.
+
+# CSRF cookie settings
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = False  # CSRF token must be readable by frontend (JS must read it)
+CSRF_COOKIE_SAMESITE = "Strict"
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "https://flash-card-django.vercel.app",
+    "https://flash-card-django-main-olilamrous-projects.vercel.app",
+    "https://flash-card-django-production-olilamrous-projects.vercel.app",
+]
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
@@ -96,7 +123,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'flashcard.wsgi.application'
-
 
 # Database
 DATABASES = {

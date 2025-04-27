@@ -1,37 +1,19 @@
 <script>
     import { goto } from "$app/navigation";
 	import { api } from "$lib";
+    import { login } from "$lib";
     let username = ''
     let password = ''
 
-    const login = async () => {
-        const response = await api('token/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username,
-                password,
-            })
-        })
-        
-        const data = await response.json();
-
-        if (response.ok) {
-            localStorage.setItem("access", data.access);
-            localStorage.setItem("refresh", data.refresh);
-            console.log("Logged in successfully!");
-            await goto('/words')
-        } else {
-            console.error("Login failed:", data);
-        }
+    const ux_login = async () => {
+        const data = await login(username, password)
+        goto('/words')
     }
 
 </script>
 
 <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-    <form on:submit|preventDefault={login}>
+    <form on:submit|preventDefault={ux_login}>
         <legend class="fieldset-legend">Login</legend>
     
         <label class="label">Username</label>

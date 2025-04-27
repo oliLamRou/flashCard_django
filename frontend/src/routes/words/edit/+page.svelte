@@ -1,7 +1,6 @@
 <script>
-	import { api, refreshToken } from "$lib";
+	import { api } from "$lib";
 	import { onMount } from "svelte";
-
     import { page } from "$app/stores";
 	import { goto } from "$app/navigation";
 
@@ -21,11 +20,6 @@
     let description = $state('')
 
     onMount(async() => {
-        const isUser = await refreshToken()
-        if (!isUser){
-            goto('/credentials')
-        }
-        
         await load_preference()
         await load_word_classes()
         load_word()
@@ -61,8 +55,6 @@
     const load_word = async() => {
         const word = $page.state.word
         if (word) {
-            console.log('HERE', word)
-            console.log(preferences.languageA)
             word_languageA = word[preferences.languageA]
             word_languageB = word[preferences.languageB]
             word_class = word['word_class']
@@ -86,12 +78,9 @@
         })
 
         if (response.ok) {
-            console.log(response)
             goto('/words')
         }
     }
-
-    let word_edit
 
 </script>
 

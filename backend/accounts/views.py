@@ -1,4 +1,4 @@
-from django.contrib.auth import logout
+import json
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
@@ -8,6 +8,31 @@ from accounts.models import Preference
 from accounts.serializers import PreferenceSerializer
 
 from commun.enums import LANGUAGE
+
+from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
+
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+@ensure_csrf_cookie
+def csrf(request):
+    return JsonResponse({'detail': 'CSRF cookie set'})
+
+# API for login
+def api_login(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user = authenticate(username=data["username"], password=data["password"])
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"message": "Logged in"})
+        else:
+            return JsonResponse({"message": "Invalid credentials"}, status=401)
+
+# API for logout
+def api_logout(request):
+    logout(request)
+    return JsonResponse({"message": "Logged out"})
 
 
 @api_view(['GET', 'POST'])
@@ -37,7 +62,3 @@ def preferences(request):
         
         else:
             return Response(500)
-        
-def logout_user(request):
-    logout(request.user)
-    return Response(status=200)

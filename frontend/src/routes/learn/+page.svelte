@@ -1,19 +1,13 @@
 <script>
 	import { goto } from "$app/navigation";
-	import { api, refreshToken } from "$lib";
-	import steps from "daisyui/components/steps";
+	import { api } from "$lib";
 	import { onMount } from "svelte";
-
 
     let preferences = $state({})
     let word = $state({})
+    let showAnswer = $state(false)
 
-    onMount(async() => {
-        const isUser = await refreshToken()
-        if (!isUser){
-            goto('/credentials')
-        }
-        
+    onMount(async() => {   
         load()
     })
 
@@ -33,6 +27,8 @@
     }
 
     const update = async(score) => {
+        showAnswer = false
+
         const data = {
             id: word.id,
             score: score
@@ -59,7 +55,7 @@
       <card-body>
         <p>{preferences.languageA} - { word[preferences.languageA] }</p>
         <label class="swap">
-            <input type="checkbox" />
+            <input type="checkbox" bind:checked={showAnswer}/>
             <div class="swap-on">{ word[preferences.languageB] }</div>
             <div class="swap-off">click for answer</div>
         </label>      

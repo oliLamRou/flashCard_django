@@ -18,8 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
 
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
@@ -27,6 +25,4 @@ urlpatterns = [
     path('home/', include('home.urls')),
     path('api/dictionary/', include('dictionary.urls')),
     path('', lambda request: redirect('/home/')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

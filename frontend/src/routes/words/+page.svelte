@@ -1,6 +1,6 @@
 <script>
     import { onMount } from "svelte";
-    import { api, refreshToken } from "$lib";
+    import { api } from "$lib";
 	import { goto } from "$app/navigation";
 
     let words = $state()
@@ -8,11 +8,6 @@
     let word_classes = $state({})
             
     onMount(async() => {
-        const isUser = await refreshToken()
-        if (!isUser){
-            goto('/credentials')
-        }
-
         load_word_classes()
         load()
     })
@@ -31,7 +26,7 @@
     }
 
     const load = async() => {
-        const response = await api('dictionary', {
+        const response = await api('dictionary/', {
             method: 'GET'
         })
 
@@ -43,7 +38,7 @@
     }
 
     const create = (id) => {
-        goto('words/edit')
+        goto('words/edit/')
     }
 
     const edit = (word) => {

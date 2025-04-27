@@ -1,59 +1,56 @@
+import { goto } from "$app/navigation";
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-export function removeTokens() {
-    console.log("Removing Tokens")
-    localStorage.removeItem('access')
-    localStorage.removeItem('refresh')
+async function getCSRF() {
+    await fetch('http://localhost:8000/api/auth/csrf/', {
+        method: 'GET',
+        credentials: 'include'
+    });
 }
 
-export async function refreshToken() {
-    const refresh = localStorage.getItem('refresh');
-    const response = await fetch(BASE_URL + 'token/refresh/', {
+// Small helper to get the csrftoken from cookies
+function getCookie(name) {
+    let value = `; ${document.cookie}`;
+    let parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+export async function login(username, password) {
+    // await getCSRF(); // make sure CSRF is set
+
+    const response = await api('auth/login/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refresh })
-    });
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password })        
+    })
 
     if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('access', data.access);
-        return true;
+        console.log('Logged in!');
     } else {
-        // Refresh token failed (maybe expired)
-        removeTokens()
-        return false;
+        const data = await response.json();
+        throw new Error(data.detail || 'Login failed');
     }
+    
+    return await response.json();
 }
 
 export async function api(endpoint, options = {}) {
     const url = BASE_URL + endpoint
     console.log("requesting: ", url)
-    
-    let access = localStorage.getItem('access');
 
     const authOptions = {
+        credentials: 'include',
         ...options,
         headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
             ...options.headers,
-            'Authorization': `Bearer ${access}`,
-            // 'Content-Type': 'application/json',
         }
     };
 
     let response = await fetch(url, authOptions);
-
-    // If access token is expired
-    if (response.status === 401) {
-        const refreshed = await refreshToken();
-        if (refreshed) {
-            // Retry original request
-            access = localStorage.getItem('access');
-            authOptions.headers['Authorization'] = `Bearer ${access}`;
-            response = await fetch(url, authOptions);
-        } else {
-            throw new Error("Session expired. Please log in again.");
-        }
-    }
 
     return response;
 }

@@ -1,42 +1,38 @@
-import json
-
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import Response
 
+from django.contrib.auth.models import User
+
 from accounts.models import Preference
 from accounts.serializers import PreferenceSerializer
+from accounts.models import Preference
 
 from commun.enums import LANGUAGE
 
-from django.contrib.auth import authenticate, login, logout
-from django.http import JsonResponse
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register(request):
+    if request.method == 'POST':
+        data = request.data
+        username = data.get('username')
+        password = data.get('password')
 
-from django.views.decorators.csrf import ensure_csrf_cookie
-
-@ensure_csrf_cookie
-def csrf(request):
-    return JsonResponse({'detail': 'CSRF cookie set'})
-
-# API for login
-def api_login(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        user = authenticate(username=data["username"], password=data["password"])
-        if user is not None:
-            login(request, user)
-            return JsonResponse({"message": "Logged in"})
-        else:
-            return JsonResponse({"message": "Invalid credentials"}, status=401)
-
-# API for logout
-def api_logout(request):
-    logout(request)
-    return JsonResponse({"message": "Logged out"})
-
+        if not username or not password:
+            return Response(status=422)
+        
+        if User.objects.filter(username=username).exists():
+            return Response(status=422)
+        
+        new_user = User.objects.create_user(username=username, password=password)
+        if new_user:
+            print("New User Created", new_user.username)
+            Preference.objects.create(user=new_user)
+            return Response(status=201)
+        
+    return Response(status=500)
 
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
 def preferences(request):
     if request.method == 'GET':
         modes = {mode[0]: mode[1] for mode in Preference.LEARN_MODE.choices}

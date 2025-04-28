@@ -1,23 +1,19 @@
 import random
 import math
 
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 
+from rest_framework.decorators import api_view
 from rest_framework.views import Response
 
 from dictionary.models import Word
 from dictionary.serializers import WordSerializer
 
 from accounts.serializers import PreferenceSerializer
-
-
-from django.http import HttpResponse
-from django.db.models import F
-from django.shortcuts import render, get_object_or_404
+from accounts.models import Preference
 
 from learn.models import Score
-from accounts.models import Preference
 
 def get_some_querySet(querySet, perc=1):
     queryList = list(querySet)
@@ -27,7 +23,6 @@ def get_some_querySet(querySet, perc=1):
     return queryList[:amount]
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def guess(request):
     if request.method == 'GET':
         WORDS_GOOD_PERC = 0.01
@@ -97,7 +92,6 @@ def guess(request):
     return Response({"word": serialized_word})
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def score(request):
     if request.method == "POST":
         print(f'request: {request.data}')

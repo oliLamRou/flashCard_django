@@ -1,5 +1,5 @@
 <script>
-	import { api } from "$lib";
+	import { api } from "$lib/api";
 	import { onMount } from "svelte";
     import { page } from "$app/stores";
 	import { goto } from "$app/navigation";

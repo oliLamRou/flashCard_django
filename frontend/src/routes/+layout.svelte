@@ -1,18 +1,13 @@
 <script>
-	import { onMount } from "svelte";
     import "../app.css";
+	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
-	import { api } from "$lib";
+	import { removeTokens } from "$lib/auth";
+    
     let { children } = $props();
 
-    onMount(() => {
-        goto('/words')
-    })
-
     const logout = async() => {
-        await api('auth/logout/', {
-            method: 'GET'
-        })
+        removeTokens()    
         goto('/credentials')
     }
 

@@ -60,6 +60,7 @@ def read(request):
         .exclude(**{f"{lang_a}": ''})
         .exclude(**{f"{lang_b}__isnull": True})
         .exclude(**{f"{lang_b}": ''})
+        .order_by(*[lang_a])
     ) 
 
     words_serialized = WordSerializer(words, many=True)

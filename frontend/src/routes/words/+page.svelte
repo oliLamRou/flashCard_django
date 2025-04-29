@@ -2,11 +2,28 @@
     import { onMount } from "svelte";
     import { api } from "$lib/api";
 	import { goto } from "$app/navigation";
+	import stat from "daisyui/components/stat";
 
-    let words = $state()
-    let preference = $state()
+    let words = $state([])
+    let preference = $state({})
     let word_classes = $state({})
-            
+
+    let searchValue = $state()
+
+    let filtered_words = $derived.by(() => {
+        if (!searchValue || searchValue === '') {return words}
+        const result = words.filter((word) => {
+            const word_a = word[preference.languageA]?.toLowerCase()
+            const word_b = word[preference.languageB]?.toLowerCase()
+            if (word_a && word_a.includes(searchValue)) {
+                return word
+            } else if (word_b && word_b.includes(searchValue)) {
+                return word
+            }
+        })
+        return result
+    })
+
     onMount(async() => {
         load_word_classes()
         load()
@@ -32,8 +49,8 @@
 
         if (response.ok) {
             const data = await response.json()
-            words = data.words
-            preference = data.preference
+            Object.assign(words, data.words)
+            Object.assign(preference, data.preference)
         }
     }
 
@@ -70,6 +87,7 @@
 
 <button onclick={create} class="btn btn-secondary btn-sm">New</button>
 <button onclick={batch_import} class="btn btn-secondary btn-sm">Import</button>
+<input type="text" placeholder="Search" class="input" bind:value={searchValue}/>
 <div class="overflow-x-auto">
     <table class="table table-zebra">
         <thead>            
@@ -85,11 +103,11 @@
             </tr>
         </thead>
         <tbody>
-            {#each words as word}
+            {#each filtered_words as word}
             <tr>
                 <td>{ word.user }</td>
-                <td>{ word.FR }</td>
-                <td>{ word.KR }</td>
+                <td>{ word[preference.languageA] }</td>
+                <td>{ word[preference.languageB] }</td>
                 <td>{ word.description }</td>
                 <td>{ word_classes[word.word_class] }</td>
                 <td>{ word.user_score?.fail }</td>

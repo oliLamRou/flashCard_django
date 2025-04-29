@@ -18,9 +18,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True if os.getenv("DEV_MODE") else False
+if DEBUG:
+    print("DEV MODE ON!")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -28,10 +32,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-%h@5l^(767q6(t070fgh%w#%%f0ly@3bida^o#v^s+k)meqv6@'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['flashcard-django.onrender.com', 'localhost']
+ALLOWED_HOSTS = [
+    'flashcard-django.onrender.com', 
+    'localhost',
+]
 
 
 # Application definition
@@ -67,36 +71,17 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
 
-# Use signed cookies for session storage
-SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
-
-# Security settings for the cookie
-SESSION_COOKIE_NAME = "sessionid"  # Default name
-SESSION_COOKIE_SECURE = True      # Only over HTTPS
-SESSION_COOKIE_HTTPONLY = True     # JS can't access
-SESSION_COOKIE_SAMESITE = "None" # Protect from CSRF
-
-#SESSION_COOKIE_SAMESITE & CSRF_COOKIE_SAMESITE
-#which is good for security, but if you have issues cross-site later (e.g., Vercel frontend, Render backend), you might eventually change SameSite to "Lax" or "None" (but Strict is fine for localhost testing for now.
-
-# CSRF cookie settings
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = False  # CSRF token must be readable by frontend (JS must read it)
-CSRF_COOKIE_SAMESITE = "None"
-
-CSRF_TRUSTED_ORIGINS = [
+#CORS
+CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://flash-card-django.vercel.app",
-    "https://flash-card-django-main-olilamrous-projects.vercel.app",
-    "https://flash-card-django-git-main-olilamrous-projects.vercel.app",
-    "https://flash-card-django-production-olilamrous-projects.vercel.app",
+    "https://flash-card-django-git-develop-olilamrous-projects.vercel.app",
 ]
 
-CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS.copy()
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 
@@ -170,8 +155,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-LOGIN_URL = '/auth/login/'
-LOGOUT_URL = '/auth/logout/'
-LOGIN_REDIRECT_URL = '/home'
-LOGOUT_REDIRECT_URL = '/auth/login/'

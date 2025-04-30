@@ -2,9 +2,16 @@
     import "../app.css";
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
-	import { removeTokens } from "$lib/auth";
+	import { refreshToken, removeTokens } from "$lib/auth";
     
     let { children } = $props();
+
+    onMount(async() => {
+        goto('/credentials')
+        if (await refreshToken()){
+            goto('/words')
+        }
+    })
 
     const logout = async() => {
         removeTokens()    

@@ -2,12 +2,17 @@
     import { goto } from "$app/navigation";
 	import { api } from "$lib/api";
 	import { getTokens } from "$lib/auth";
+	import { userState } from "$lib/state.svelte";
     let username = $state('')
     let password = $state('')
     let authType = $state(true)
 
     const login = async() => {
         const response = await getTokens(username, password)
+        if (response.ok) {
+            userState.username = username
+            goto('/words')
+        }
     }
 
     const signUp = () => {

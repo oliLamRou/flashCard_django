@@ -12,28 +12,49 @@ from learn.models import Score
 from accounts.models import Preference
 from accounts.serializers import PreferenceSerializer
 
-@api_view(['POST'])
+@api_view(['POST', 'PATCH'])
 def create(request):
+    preference = Preference.objects.filter(user=request.user).first()
     if request.method == 'POST':
-        preference = Preference.objects.filter(user=request.user).first()
         word_instance = Word.objects.filter(
-                user=request.user,
-                **{f"{preference.languageA}": request.data[preference.languageA]},
-                **{f"{preference.languageB}": request.data[preference.languageB]},
+            user=request.user,
+            **{f"{preference.languageA}": request.data[preference.languageA]},
+            **{f"{preference.languageB}": request.data[preference.languageB]},
             ).first()
         
         if word_instance:
-            serialized_word = WordSerializer(word_instance, data=request.data, partial=True)
-        else:
-            serialized_word = WordSerializer(data=request.data, partial=True)
+            return Response(status=422) #already exists
 
+        serialized_word = WordSerializer(data=request.data, partial=True)
         if serialized_word.is_valid():
             serialized_word.save(user=request.user)
-            return Response(serialized_word.data, status=201 if not word_instance else 200)
+            return Response(serialized_word.data, status=201)
         else:
             return Response(serialized_word.errors, status=400)
-
-    return Response(status=405)
+        
+    elif request.method == 'PATCH':
+        data = request.data
+        
+        word_id = data.get('id')
+        word_A = data.get(preference.languageA)
+        word_B = data.get(preference.languageB)
+        update_fields = {
+            preference.languageA: word_A,
+            preference.languageB: word_B,
+            'description': data.get('description'),
+            'word_class': data.get('word_class'),
+        }        
+        if not word_id or not word_A or not word_B:
+            return Response(status=405)
+        
+        word_instance = Word.objects.filter(user=request.user, id=word_id)
+        if word_instance:
+            word_instance.update(**update_fields)
+            return Response(status=201)
+        else:
+            return Response(status=405)
+    else:
+        return Response(status=405)
     
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -60,6 +81,7 @@ def read(request):
         .exclude(**{f"{lang_a}": ''})
         .exclude(**{f"{lang_b}__isnull": True})
         .exclude(**{f"{lang_b}": ''})
+        .filter(user=request.user)
         .order_by(*[lang_a])
     ) 
 

@@ -4,8 +4,10 @@
 	import { goto } from "$app/navigation";
 	import stat from "daisyui/components/stat";
 
+    let username = $state("No user")
+
     let words = $state([])
-    let preference = $state({})
+    let preferences = $state({})
     let word_classes = $state({})
 
     let searchValue = $state()
@@ -13,8 +15,8 @@
     let filtered_words = $derived.by(() => {
         if (!searchValue || searchValue === '') {return words}
         const result = words.filter((word) => {
-            const word_a = word[preference.languageA]?.toLowerCase()
-            const word_b = word[preference.languageB]?.toLowerCase()
+            const word_a = word[preferences.languageA]?.toLowerCase()
+            const word_b = word[preferences.languageB]?.toLowerCase()
             if (word_a && word_a.includes(searchValue)) {
                 return word
             } else if (word_b && word_b.includes(searchValue)) {
@@ -48,9 +50,9 @@
         })
 
         if (response.ok) {
-            const data = await response.json()
-            Object.assign(words, data.words)
-            Object.assign(preference, data.preference)
+            const data = await response.json()            
+            words = data.words
+            preferences = data.preference    
         }
     }
 
@@ -85,6 +87,7 @@
 
 </script>
 
+<!-- <h1>Hi {username}!</h1> -->
 <button onclick={create} class="btn btn-secondary btn-sm">New</button>
 <button onclick={batch_import} class="btn btn-secondary btn-sm">Import</button>
 <input type="text" placeholder="Search" class="input" bind:value={searchValue}/>
@@ -92,11 +95,10 @@
     <table class="table table-zebra">
         <thead>            
             <tr>
-                <th>User</th>
-                <th>{ preference?.languageA}</th>
-                <th>{ preference?.languageB }</th>
-                <th>Description</th>
                 <th>Word Class</th>
+                <th>{ preferences?.languageA}</th>
+                <th>{ preferences?.languageB }</th>
+                <th>Description</th>
                 <th>Fail</th>
                 <th>Success</th>
                 <th>Options</th>
@@ -105,11 +107,10 @@
         <tbody>
             {#each filtered_words as word}
             <tr>
-                <td>{ word.user }</td>
-                <td>{ word[preference.languageA] }</td>
-                <td>{ word[preference.languageB] }</td>
+                <td class="capitalize">{ word_classes[word.word_class] }</td>
+                <td class="capitalize">{ word[preferences.languageA] }</td>
+                <td class="capitalize">{ word[preferences.languageB] }</td>
                 <td>{ word.description }</td>
-                <td>{ word_classes[word.word_class] }</td>
                 <td>{ word.user_score?.fail }</td>
                 <td>{ word.user_score?.success }</td>
                 <td>

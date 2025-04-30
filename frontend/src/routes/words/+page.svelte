@@ -1,10 +1,10 @@
 <script>
-    import { onMount } from "svelte";
-    import { api } from "$lib/api";
-	import { goto } from "$app/navigation";
 	import stat from "daisyui/components/stat";
 
-    let username = $state("No user")
+    import { onMount } from "svelte";
+	import { goto } from "$app/navigation";
+    import { api } from "$lib/api";
+	import { userState } from "$lib/state.svelte";
 
     let words = $state([])
     let preferences = $state({})
@@ -87,7 +87,7 @@
 
 </script>
 
-<!-- <h1>Hi {username}!</h1> -->
+<h1>Hi {userState.username}!</h1>
 <button onclick={create} class="btn btn-secondary btn-sm">New</button>
 <button onclick={batch_import} class="btn btn-secondary btn-sm">Import</button>
 <input type="text" placeholder="Search" class="input" bind:value={searchValue}/>

@@ -1,70 +1,76 @@
 import { goto } from "$app/navigation";
+import { userState } from "$lib/state.svelte";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export async function register(username, password) {
-    const url = BASE_URL + 'auth/register/'    
+    const url = BASE_URL + 'auth/register/'
+    const credentials = {
+        username: username,
+        password: password,
+    }
+
     const response = await fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            username: username,
-            password: password,
-        })
+        body: JSON.stringify(credentials),
+        headers: { 'Content-Type': 'application/json' },
     })
 
     return response
 }
 
+export function resetUserState() {
+    userState.username = null
+    userState.accessToken = null
+    userState.refreshToken = null    
+}
 
 export function removeTokens() {
     console.log("Removing Tokens")
-    localStorage.removeItem('access')
-    localStorage.removeItem('refresh')
+    userState.accessToken = null
+    userState.refreshToken = null
 }
 
 export async function refreshToken() {
-    const refresh = localStorage.getItem('refresh');
+    const refresh = userState.refreshToken
     const response = await fetch(BASE_URL + 'token/refresh/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refresh })
+        body: JSON.stringify({ refreshToken })
     });
 
     if (response.ok) {
         const data = await response.json();
-        localStorage.setItem('access', data.access);
+        userState.accessToken = data.access
+        userState.refreshToken = data.refresh
         return true;
     } else {
-        // Refresh token failed (maybe expired)
         removeTokens()
         return false;
     }
 }
 
 export async function getTokens(username, password) {
-    const url = BASE_URL + 'token/'    
+    const url = BASE_URL + 'token/'
+    const credentials = {
+        username,
+        password,
+    }
     const response = await fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            username,
-            password,
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials)
     })
     
     const data = await response.json();
 
     if (response.ok) {
-        localStorage.setItem("access", data.access);
-        localStorage.setItem("refresh", data.refresh);
+        userState.accessToken = data.access
+        userState.refreshToken = data.refresh
         console.log("Logged in successfully!");
-        goto('/words')
+        return response
     } else {
         console.error("Login failed:", data);
+        return response
     }
 }

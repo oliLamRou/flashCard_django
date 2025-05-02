@@ -1,18 +1,21 @@
 <script>
     import { goto } from "$app/navigation";
 	import { api } from "$lib/api";
-	import { getTokens } from "$lib/auth";
+	import { _login, _refresh } from "$lib/auth";
 	import { userState } from "$lib/state.svelte";
     let username = $state('')
     let password = $state('')
     let authType = $state(true)
 
-    const login = async() => {
-        const response = await getTokens(username, password)
+    const login = async() => {        
+        const response = await _login(username, password)        
         if (response.ok) {
             userState.username = username
             goto('/words')
         }
+    }
+    const refresh = async() => {
+        _refresh()
     }
 
     const signUp = () => {
@@ -34,3 +37,5 @@
     </form>    
     <button class="btn btn-neutral mt-4" on:click={signUp}>sign up</button>
 </fieldset>
+
+<button on:click={refresh}>Refresh</button>

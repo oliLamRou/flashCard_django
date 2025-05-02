@@ -1,5 +1,1 @@
-export const userState = $state({
-	username: null,
-	accessToken: null,
-	refreshToken: null,
-});
+export const userState = $state({});

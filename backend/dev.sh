@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-python -m uvicorn flashcard.asgi:application --reload 
+source ../.venv/bin/activate
+python -m uvicorn flashcard.asgi:application --reload
+

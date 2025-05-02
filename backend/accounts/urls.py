@@ -1,12 +1,10 @@
 from django.urls import path
-from accounts.views import preferences, register
+from accounts.views import preferences, register, login, refresh_tokens, user_info
 
 urlpatterns = [
-    # path('login/', LoginView.as_view(template_name='login.html'), name='login'),
-    # path('logout/', LogoutView.as_view(), name='logout'),
-    # path('login/', api_login, name='login'),
-    # path('logout/', api_logout, name='logout'),
-    # path('csrf/', csrf, name='csrf'),
+    path('login/', login, name='login'),
+    path('refresh/', refresh_tokens, name='refresh'),
     path('register/', register, name='register'),
     path('preference/', preferences, name='preference'),
+    path('info/', user_info, name='info'),
 ]

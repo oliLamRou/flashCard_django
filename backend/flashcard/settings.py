@@ -30,16 +30,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%h@5l^(767q6(t070fgh%w#%%f0ly@3bida^o#v^s+k)meqv6@'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 ALLOWED_HOSTS = [
     'flashcard-django.onrender.com', 
     'localhost',
 ]
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -79,7 +77,10 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://flash-card-django.vercel.app",
-    "https://flash-card-django-git-develop-olilamrous-projects.vercel.app",
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https:\/\/flash-card-django.*\.vercel\.app$",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

@@ -1,19 +1,19 @@
 <script>
     import { goto } from "$app/navigation";
 	import { api } from "$lib/api";
-	import { getTokens } from "$lib/auth";
-    import { register } from "$lib/auth";
+	import { _login } from "$lib/auth";
+    import { _register } from "$lib/auth";
     let username = $state('')
     let password = $state('')
     let authType = $state(true)
 
     let languages = $state([])
 
-    const sign_up = async() => {
-        const res_register = await register(username, password)
+    const register = async() => {
+        const res_register = await _register(username, password)
         if (res_register.status !== 201) { return }
 
-        const response = await getTokens(username, password)
+        const response = await _login(username, password)
     }
 
 </script>

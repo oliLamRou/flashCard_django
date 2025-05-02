@@ -2,19 +2,31 @@
     import "../app.css";
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
-	import { refreshToken, removeTokens } from "$lib/auth";
+	import { _remove_user } from "$lib/auth";
+	import { api } from "$lib/api";
+	import { userState } from "$lib/state.svelte";
     
     let { children } = $props();
 
     onMount(async() => {
-        goto('/credentials')
-        if (await refreshToken()){
+        console.log("RELOAD");
+        const response = await api('auth/info/', {
+            method: 'GET',
+
+        })
+        
+        const data = await response.json()
+        Object.assign(userState, data)
+
+        if (response.status === 200) {
             goto('/words')
+        } else {
+            goto('/credentials')
         }
     })
 
     const logout = async() => {
-        removeTokens()    
+        _remove_user()
         goto('/credentials')
     }
 

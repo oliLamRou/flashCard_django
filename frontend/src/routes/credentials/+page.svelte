@@ -37,5 +37,3 @@
     </form>    
     <button class="btn btn-neutral mt-4" on:click={signUp}>sign up</button>
 </fieldset>
-
-<button on:click={refresh}>Refresh</button>

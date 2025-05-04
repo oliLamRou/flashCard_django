@@ -1,8 +1,8 @@
 <script>
     import { goto } from "$app/navigation";
-	import { api } from "$lib/api";
-	import { _login } from "$lib/auth";
-    import { _register } from "$lib/auth";
+	import { api } from "$lib/api/api";
+	import { _login } from "$lib/api/auth";
+    import { _register } from "$lib/api/auth";
     let username = $state('')
     let password = $state('')
     let authType = $state(true)

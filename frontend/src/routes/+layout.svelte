@@ -2,8 +2,8 @@
     import "../app.css";
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
-	import { _remove_user } from "$lib/auth";
-	import { api } from "$lib/api";
+	import { _remove_user } from "$lib/api/auth";
+	import { api } from "$lib/api/api";
 	import { userState } from "$lib/state.svelte";
     
     let { children } = $props();

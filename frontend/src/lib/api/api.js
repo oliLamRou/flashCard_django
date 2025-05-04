@@ -1,7 +1,7 @@
 import { goto } from "$app/navigation";
 import { userState } from "$lib/state.svelte";
-import { _refresh } from "./auth";
-import { ACCESS_TOKEN_KEY, BASE_URL } from "./constant";
+import { _refresh } from "$lib/api/auth";
+import { ACCESS_TOKEN_KEY, BASE_URL } from "$lib/constant";
 
 export async function api(endpoint, options = {}) {
     const access_token = sessionStorage.getItem(ACCESS_TOKEN_KEY)

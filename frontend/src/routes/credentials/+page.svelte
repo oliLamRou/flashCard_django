@@ -1,7 +1,7 @@
 <script>
     import { goto } from "$app/navigation";
-	import { api } from "$lib/api";
-	import { _login, _refresh } from "$lib/auth";
+	import { api } from "$lib/api/api";
+	import { _login, _refresh } from "$lib/api/auth";
 	import { userState } from "$lib/state.svelte";
     let username = $state('')
     let password = $state('')

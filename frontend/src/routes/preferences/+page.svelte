@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-    import { api } from "$lib/api";
+    import { api } from "$lib/api/api";
 	import { goto } from "$app/navigation";
 
     let preferences = $state({

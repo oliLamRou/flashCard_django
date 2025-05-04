@@ -3,7 +3,7 @@
 
     import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
-    import { api } from "$lib/api";
+    import { api } from "$lib/api/api";
 	import { userState } from "$lib/state.svelte";
 
     let words = $state([])

@@ -113,6 +113,7 @@ def user_info(request):
         user = User.objects.filter(username=request.user).first()
         if user:
             data = {
+                'id': user.id,
                 'username': user.username,
                 'email': user.email,
                 'first_name': user.first_name,

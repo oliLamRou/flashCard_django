@@ -20,7 +20,7 @@
 
 <h1>Sign Up</h1>
 <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-    <form on:submit|preventDefault={sign_up}>
+    <form on:submit|preventDefault={register}>
         <legend class="fieldset-legend">Login</legend>
     
         <label class="label">Username</label>

@@ -30,7 +30,7 @@
                 <input type="checkbox" bind:checked={showAnswer}/>
                 <div class="swap-on">{ word[preferences.languageB] }</div>
                 <div class="swap-off">click for answer</div>
-            </label>      
+            </label>
           </card-body>
           <p>{ word['description'] }</p>
           <div class="card-actions justify-end">

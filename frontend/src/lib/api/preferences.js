@@ -5,27 +5,23 @@ export async function load_preferences() {
 
     if (response.ok) {
         return await response.json()
-        // Object.assign(preferences, data)
-
-        // languageA = data.preferences.languageA
-        // languageB = data.preferences.languageB
-        // learnMode = data.preferences.learnMode
     }
 }
 
-// const save = async() => {
-//     const data = {
-//         languageA: languageA,
-//         languageB: languageB,
-//         learnMode: learnMode,
-//     }
+export async function save_prefererences(languageA, languageB, learnMode) {
+    const data = {
+        languageA: languageA,
+        languageB: languageB,
+        learnMode: learnMode,
+    }
 
-//     const response = await api('auth/preference/', {
-//         method: 'POST',
-//         body: JSON.stringify(data),
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//     })
-//     goto('/words')
-// }
+    const response = await api('auth/preference/', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+
+    return response
+}

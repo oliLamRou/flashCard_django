@@ -1,15 +1,4 @@
-import { api } from "./api"
-
-export async function load_word_classes() {
-    const response = await api('dictionary/word_classes/', {
-        method: 'GET'
-    })
-
-    if (response.ok) {
-        return await response.json()
-        // Object.assign(word_classes, data.word_classes)
-    }
-}
+import { api } from "$lib/api/api"
 
 export async function load_words() {
     const response = await api('dictionary/', {
@@ -18,8 +7,6 @@ export async function load_words() {
 
     if (response.ok) {
         return await response.json()            
-        // words = data.words
-        // preferences = data.preference    
     }
 }
 

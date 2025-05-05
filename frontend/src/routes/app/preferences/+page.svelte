@@ -1,20 +1,27 @@
 <script>
 	import { goto } from "$app/navigation";
 	import { save_prefererences } from "$lib/api/preferences.js";
+	import { appState, userState } from "$lib/state.svelte.js";
+	import { onMount } from "svelte";
 
     let { data } = $props()
 
-    let preferences = $state(data.preferences)
-    let languages = $state(data.languages)
-    let modes = $state(data.modes)
-    let languageA = $state(preferences.languageA)
-    let languageB = $derived(preferences.languageB)
-    let learnMode = $state(preferences.learnMode)
+    let languages = $state(appState.languages)
+    let modes = $state(appState.modes)
+
+    let languageA = $state(userState.preferences.languageA)
+    let languageB = $state(userState.preferences.languageB)
+    let learnMode = $state(userState.preferences.learnMode)
+
+    onMount(() => {
+        console.log(userState, appState);
+        
+    })
 
     const save = async() => {
         const response = await save_prefererences(languageA, languageB, learnMode)
         if (response.ok) {
-            goto('/words')
+            goto('/app/words')
         }
     }
     

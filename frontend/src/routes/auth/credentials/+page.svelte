@@ -11,7 +11,7 @@
         const response = await _login(username, password)        
         if (response.ok) {
             userState.username = username
-            goto('/words')
+            goto('/app/words')
         }
     }
     const refresh = async() => {

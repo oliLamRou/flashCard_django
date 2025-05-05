@@ -2,14 +2,15 @@
     import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
     import { api } from "$lib/api/api";
-	import { userState } from "$lib/state.svelte";
+	import { appState, userState } from "$lib/state.svelte";
 	import { load_words, remove_word } from "$lib/api/words";
 
     const { data } = $props()
-
     let words = $state(data.words)
-    let preferences = $state(data.preferences)
-    let word_classes = $state(data.word_classes)
+
+    let word_classes = $state(appState.word_classes)
+    let languageA = $state(userState.preferences.languageA)
+    let languageB = $state(userState.preferences.languageB)
 
     let searchValue = $state()
     let userWords = $state(false)
@@ -18,11 +19,11 @@
         let result = words
         if (searchValue) {
             result = words.filter((word) => {
-                const word_a = word[preferences.languageA]?.toLowerCase()
-                const word_b = word[preferences.languageB]?.toLowerCase()
-                if (word_a && word_a.includes(searchValue)) {
+                const word_a = word[languageA]?.toLowerCase()
+                const word_b = word[languageB]?.toLowerCase()
+                if (word_a && word_a.includes(searchValue.toLowerCase())) {
                     return word
-                } else if (word_b && word_b.includes(searchValue)) {
+                } else if (word_b && word_b.includes(searchValue.toLowerCase())) {
                     return word
                 }
             })
@@ -73,8 +74,8 @@
             <tr>
                 <th>ID</th>
                 <th>Word Class</th>
-                <th>{ preferences?.languageA}</th>
-                <th>{ preferences?.languageB }</th>
+                <th>{languageA}</th>
+                <th>{languageB }</th>
                 <th>Description</th>
                 <th>Fail</th>
                 <th>Success</th>
@@ -86,8 +87,8 @@
                 <tr>
                     <td>{ word.user }</td>
                     <td class="capitalize">{ word_classes[word.word_class] }</td>
-                    <td class="capitalize">{ word[preferences?.languageA] }</td>
-                    <td class="capitalize">{ word[preferences?.languageB] }</td>
+                    <td class="capitalize">{ word[languageA] }</td>
+                    <td class="capitalize">{ word[languageB] }</td>
                     <td>{ word.description }</td>
                     <td>{ word.user_score?.fail }</td>
                     <td>{ word.user_score?.success }</td>

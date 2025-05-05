@@ -1,4 +1,3 @@
-import { goto } from "$app/navigation";
 import { userState } from "$lib/state.svelte";
 import { ACCESS_TOKEN_KEY, BASE_URL } from "$lib/constant";
 

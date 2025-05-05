@@ -3,11 +3,12 @@
 	import { onMount } from "svelte";
     import { page } from "$app/stores";
 	import { goto } from "$app/navigation";
+	import { appState, userState } from "$lib/state.svelte";
 
     let word_modal = $state()
 
     //Enum
-    let word_classes = $state([])
+    let word_classes = $state(appState.word_classes)
     let languages = $state({})
 
     //User
@@ -20,12 +21,11 @@
     let word_class = $state('undef')
     let description = $state('')
 
-    onMount(async() => {
-
-        await load_preference()
-        await load_word_classes()
-        load_word()
-    })
+    // onMount(async() => {
+    //     await load_preference()
+    //     // await load_word_classes()
+    //     load_word()
+    // })
 
     const load_preference = async() => {
         const response = await api('auth/preference/', {
@@ -41,18 +41,18 @@
         return response
     }
 
-    const load_word_classes = async() => {
-        const response = await api('dictionary/word_classes/', {
-            method: 'GET'
-        })
+    // const load_word_classes = async() => {
+    //     const response = await api('dictionary/word_classes/', {
+    //         method: 'GET'
+    //     })
 
-        if (response.ok) {
-            const data = await response.json()
-            Object.assign(word_classes, data.word_classes)
-        }
+    //     if (response.ok) {
+    //         const data = await response.json()
+    //         Object.assign(word_classes, data.word_classes)
+    //     }
 
-        return response
-    }
+    //     return response
+    // }
 
     const load_word = async() => {
         const word = $page.state.word

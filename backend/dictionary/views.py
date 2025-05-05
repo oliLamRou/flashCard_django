@@ -88,7 +88,7 @@ def read(request):
     preference_serialized = PreferenceSerializer(preference, many=True)
     return Response({
         'words': words_serialized.data, 
-        'preference': preference_serialized.data[0],
+        'preferences': preference_serialized.data[0],
         })
 
 @api_view(['POST'])

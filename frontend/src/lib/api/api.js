@@ -30,7 +30,7 @@ export async function api(endpoint, options = {}) {
             response = await fetch(url, authOptions);
         } else {
             //destroy_user
-            goto('/credentials')
+            goto('/auth/credentials')
             throw new Error("Session expired. Please log in again.");
         }
     }

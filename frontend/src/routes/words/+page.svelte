@@ -1,14 +1,15 @@
 <script>
-	import stat from "daisyui/components/stat";
-
     import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
     import { api } from "$lib/api/api";
 	import { userState } from "$lib/state.svelte";
+	import { load_words, remove_word } from "$lib/api/words";
 
-    let words = $state([])
-    let preferences = $state({})
-    let word_classes = $state({})
+    const { data } = $props()
+
+    let words = $state(data.words)
+    let preferences = $state(data.preferences)
+    let word_classes = $state(data.word_classes)
 
     let searchValue = $state()
     let userWords = $state(false)
@@ -33,36 +34,6 @@
         return result
     })
 
-    onMount(async() => {
-        load_word_classes()
-        load()
-    })
-
-    const load_word_classes = async() => {
-        const response = await api('dictionary/word_classes/', {
-            method: 'GET'
-        })
-
-        if (response.ok) {
-            const data = await response.json()
-            Object.assign(word_classes, data.word_classes)
-        }
-
-        return response
-    }
-
-    const load = async() => {
-        const response = await api('dictionary/', {
-            method: 'GET'
-        })
-
-        if (response.ok) {
-            const data = await response.json()            
-            words = data.words
-            preferences = data.preference    
-        }
-    }
-
     const create = (id) => {
         goto('words/edit/')
     }
@@ -79,16 +50,10 @@
     }
 
     const remove = async(id) => {
-        const response = await api('dictionary/delete/', {
-            method: 'POST',
-            body: JSON.stringify({'id': id}),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-
+        const response = await remove_word(id)
         if (response.ok) {
-            load()
+            const data = await load_words()
+            words = data.words
         }
     }
 
@@ -121,8 +86,8 @@
                 <tr>
                     <td>{ word.user }</td>
                     <td class="capitalize">{ word_classes[word.word_class] }</td>
-                    <td class="capitalize">{ word[preferences.languageA] }</td>
-                    <td class="capitalize">{ word[preferences.languageB] }</td>
+                    <td class="capitalize">{ word[preferences?.languageA] }</td>
+                    <td class="capitalize">{ word[preferences?.languageB] }</td>
                     <td>{ word.description }</td>
                     <td>{ word.user_score?.fail }</td>
                     <td>{ word.user_score?.success }</td>

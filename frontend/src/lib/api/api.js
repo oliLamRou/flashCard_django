@@ -4,6 +4,11 @@ import { _refresh } from "$lib/api/auth";
 import { ACCESS_TOKEN_KEY, BASE_URL } from "$lib/constant";
 
 export async function api(endpoint, options = {}) {
+    if (typeof window === 'undefined') {
+        console.log("NO WINDOW");
+        return {}
+    }
+    
     const access_token = sessionStorage.getItem(ACCESS_TOKEN_KEY)
     const url = BASE_URL + endpoint
     const authOptions = {

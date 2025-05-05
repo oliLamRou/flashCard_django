@@ -1,19 +1,18 @@
 <script>
+    //load_word should be a load function in .js
+    //create should be in /api/word
+    
 	import { api } from "$lib/api/api";
 	import { onMount } from "svelte";
     import { page } from "$app/stores";
 	import { goto } from "$app/navigation";
 	import { appState, userState } from "$lib/state.svelte";
 
-    let word_modal = $state()
-
-    //Enum
+    let languageA = $state(userState.preferences.languageA)
+    let languageB = $state(userState.preferences.languageB)
+    let languages = $state(appState.languages)
     let word_classes = $state(appState.word_classes)
-    let languages = $state({})
 
-    //User
-    let preferences = $state({})
-    
     //Form Data
     let word_id = $state()
     let word_languageA = $state('')
@@ -21,45 +20,12 @@
     let word_class = $state('undef')
     let description = $state('')
 
-    // onMount(async() => {
-    //     await load_preference()
-    //     // await load_word_classes()
-    //     load_word()
-    // })
-
-    const load_preference = async() => {
-        const response = await api('auth/preference/', {
-            method: 'GET'
-        })
-
-        if (response.ok) {
-            const data = await response.json()
-            Object.assign(languages, data.languages)
-            Object.assign(preferences, data.preferences)
-        }
-
-        return response
-    }
-
-    // const load_word_classes = async() => {
-    //     const response = await api('dictionary/word_classes/', {
-    //         method: 'GET'
-    //     })
-
-    //     if (response.ok) {
-    //         const data = await response.json()
-    //         Object.assign(word_classes, data.word_classes)
-    //     }
-
-    //     return response
-    // }
-
     const load_word = async() => {
         const word = $page.state.word
         if (word) {
             word_id = word['id']
-            word_languageA = word[preferences.languageA]
-            word_languageB = word[preferences.languageB]
+            word_languageA = word[languageA]
+            word_languageB = word[languageB]
             word_class = word['word_class']
             description = word['description']
         }
@@ -67,8 +33,8 @@
 
     const create = async() => {
         const data = {
-            [preferences.languageA]: word_languageA,
-            [preferences.languageB]: word_languageB,
+            [languageA]: word_languageA,
+            [languageB]: word_languageB,
             word_class: word_class,
             description: description,
         }
@@ -87,7 +53,7 @@
 
         //This is weak
         if (response.ok) {
-            goto('/words')
+            goto('app/words')
         }
     }
 
@@ -97,11 +63,11 @@
     <form onsubmit={create}>
         <legend class="fieldset-legend">Write a word and it's translation</legend>
     
-        <label for='id' class="label">{languages[preferences.languageA]}</label>
+        <label for='id' class="label">{languages[languageA]}</label>
         <input bind:value={word_languageA} type="text" class="input validator" required minlength="2"/>
         <p class="validator-hint">Must be 2 characters at least</p>
 
-        <label for='id' class="label">{languages[preferences.languageB]}</label>
+        <label for='id' class="label">{languages[languageB]}</label>
         <input bind:value={word_languageB} type="text" class="input validator" required minlength="2"/>
         <p class="validator-hint">Must be 2 characters at least</p>
 

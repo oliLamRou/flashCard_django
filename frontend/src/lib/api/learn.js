@@ -26,7 +26,5 @@ export async function update_word(word, score) {
         },
     })
 
-    if (response.ok) {
-        load_word()
-    }
+    return response
 }

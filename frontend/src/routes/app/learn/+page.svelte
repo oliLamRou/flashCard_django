@@ -20,14 +20,27 @@
 
 </script>
 
-<div class="">
-    <p class="font-sans text-5xl">Patate</p>
-    <p class="font-sans text-3xl">Potato</p>
-    <p class="font-sans text-1xl">Description</p>
-</div>
-<div class="">
-    <button class="btn-xl btn btn-block btn-neutral">Good</button>
-    <button class="btn-xl btn btn-block btn-neutral">Bad</button>
+<div class="card bg-secondary m-3">
+    <div class="card-body flex flex-col flex-grow">
+        <p>{languageA}</p>
+        <p class="card-title font-sans text-4xl capitalize">
+            {word[languageA]}
+        </p>
+        <p class="mt-2">{languageB}</p>
+        <p class="font-sans text-3xl">
+            {showAnswer ? word[languageB] : '--'}
+        </p>
+        <p class="mt-2">Description</p>
+        <p class="font-sans text-lg">{word.description || '--'}</p>
+        <div class="card-actions mt-8">
+            {#if showAnswer}
+            <button onclick={() => next_word(1)} class="btn-xl btn btn-success">Good</button>
+            <button onclick={() => next_word(-1)} class="btn-xl btn btn-error">Bad</button>
+            {:else}    
+            <button onclick={() => showAnswer = !showAnswer} class="btn-xl btn btn-block btn-neutral">Show Answer</button>
+            {/if}
+        </div>
+    </div>
 </div>
 
 <!-- <div class="min-h-screen flex items-center justify-center">

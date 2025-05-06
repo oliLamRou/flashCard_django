@@ -40,10 +40,10 @@
     }
 
     const edit = (word) => {
-        const wordCopy = JSON.parse(JSON.stringify(word));
-        goto('words/edit/', {
-            state: {word: wordCopy}
-        })
+        // appState['selected_word'] = word
+        // const wordCopy = JSON.parse(JSON.stringify(word));
+        // goto('/app/words/edit/')
+        goto(`/app/words/edit?word=${encodeURIComponent(JSON.stringify(word))}`);
     }
 
     const batch_import = () => {
@@ -95,7 +95,7 @@
                     <td>
                         <button 
                             onclick={() => edit(word)}
-                            disabled={'disabled' ? word.user !== userState.id : 'enable'}
+                            
                             class="btn btn-xs btn-outline btn-secondary">Edit</button>
                         <button onclick={() => remove(word.id)} class="btn btn-xs btn-outline btn-warning">Delete</button>
                     </td>
@@ -104,3 +104,5 @@
         </tbody>
     </table>
 </div>
+
+<!-- disabled={'disabled' ? word.user !== userState.id : 'enable'} -->

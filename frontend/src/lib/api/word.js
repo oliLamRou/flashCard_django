@@ -1,15 +1,18 @@
+import { userState } from "$lib/state.svelte"
+import { api } from "$lib/api/api"
 
-const create = async() => {
+export async function create(word) {
+    const preferences = userState.preferences
     const data = {
-        [languageA]: word_languageA,
-        [languageB]: word_languageB,
-        word_class: word_class,
-        description: description,
+        [preferences.languageA]: word.word_languageA,
+        [preferences.languageB]: word.word_languageB,
+        word_class: word.word_class,
+        description: word.description,
     }
 
-    if (word_id) { data['id'] = word_id }
+    if (word.word_id) { data['id'] = word.word_id }
 
-    const method = (word_id) ? 'PATCH' : 'POST'
+    const method = (word.word_id) ? 'PATCH' : 'POST'
 
     const response = await api('dictionary/new/', {
         method: method,
@@ -19,8 +22,5 @@ const create = async() => {
         },
     })
 
-    //This is weak
-    if (response.ok) {
-        goto('app/words')
-    }
+    return response
 }

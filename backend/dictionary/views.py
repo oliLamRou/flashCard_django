@@ -52,7 +52,7 @@ def create(request):
             word_instance.update(**update_fields)
             return Response(status=201)
         else:
-            return Response(status=405)
+            return Response({"error": "User or ID doesn't match"}, status=409)
     else:
         return Response(status=405)
     

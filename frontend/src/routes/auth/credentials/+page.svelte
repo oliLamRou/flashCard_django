@@ -10,7 +10,6 @@
     const login = async() => {        
         const response = await _login(username, password)        
         if (response.ok) {
-            userState.username = username
             goto('/app/words')
         }
     }

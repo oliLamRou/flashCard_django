@@ -19,3 +19,13 @@ export async function load_preferences() {
         return await response.json()
     }
 }
+
+export async function load_user_info() {
+    const response = await api('auth/info/', {
+        method: 'GET'
+    })
+
+    if (response.ok) {
+        return await response.json()
+    }
+}

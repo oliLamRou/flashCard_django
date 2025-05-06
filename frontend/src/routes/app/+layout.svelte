@@ -7,23 +7,6 @@
     
     let { children } = $props();
 
-    // onMount(async() => {
-    //     console.log("RELOAD");
-    //     const response = await api('auth/info/', {
-    //         method: 'GET',
-
-    //     })
-        
-    //     const data = await response.json()
-    //     Object.assign(userState, data)
-
-    //     if (response.status === 200) {
-    //         goto('/words')
-    //     } else {
-    //         goto('/credentials')
-    //     }
-    // })
-
     const logout = async() => {
         _remove_user()
         goto('auth/credentials')

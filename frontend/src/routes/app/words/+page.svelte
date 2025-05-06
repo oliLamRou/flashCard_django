@@ -12,12 +12,16 @@
     let languageA = $state(userState.preferences.languageA)
     let languageB = $state(userState.preferences.languageB)
 
+    let username = $state(userState.user_info.username)
+    let user_id = $state(userState.user_info.id)
+
+
     let searchValue = $state()
     let userWords = $state(false)
 
     let filtered_words = $derived.by(() => {
         let result = words
-        if (searchValue) {
+        if (searchValue) {            
             result = words.filter((word) => {
                 const word_a = word[languageA]?.toLowerCase()
                 const word_b = word[languageB]?.toLowerCase()
@@ -29,7 +33,7 @@
             })
         }
         if (userWords) {
-            result = result.filter((word) => word.user == userState.id)
+            result = result.filter((word) => word.user == user_id)
         }
 
         return result
@@ -40,9 +44,6 @@
     }
 
     const edit = (word) => {
-        // appState['selected_word'] = word
-        // const wordCopy = JSON.parse(JSON.stringify(word));
-        // goto('/app/words/edit/')
         goto(`/app/words/edit?word=${encodeURIComponent(JSON.stringify(word))}`);
     }
 
@@ -58,9 +59,16 @@
         }
     }
 
+    onMount(() => {
+        console.log(userState);
+        console.log(words[0]);
+        
+        
+    })
+
 </script>
 
-<h1>Hi {userState.username} - {userState.id}!</h1>
+<h1>Hi {username}!</h1>
 <button onclick={create} class="btn btn-secondary btn-sm">New</button>
 <button onclick={batch_import} class="btn btn-secondary btn-sm">Import</button>
 <input type="text" placeholder="Search" class="input" bind:value={searchValue}/>
@@ -72,7 +80,6 @@
     <table class="table table-zebra">
         <thead>            
             <tr>
-                <th>ID</th>
                 <th>Word Class</th>
                 <th>{languageA}</th>
                 <th>{languageB }</th>
@@ -85,7 +92,6 @@
         <tbody>
             {#each filtered_words as word}
                 <tr>
-                    <td>{ word.user }</td>
                     <td class="capitalize">{ word_classes[word.word_class] }</td>
                     <td class="capitalize">{ word[languageA] }</td>
                     <td class="capitalize">{ word[languageB] }</td>
@@ -95,9 +101,12 @@
                     <td>
                         <button 
                             onclick={() => edit(word)}
-                            
+                            disabled={'disabled' ? word.user !== user_id : 'enable'}
                             class="btn btn-xs btn-outline btn-secondary">Edit</button>
-                        <button onclick={() => remove(word.id)} class="btn btn-xs btn-outline btn-warning">Delete</button>
+                        <button 
+                            onclick={() => remove(word.id)} 
+                            disabled={'disabled' ? word.user !== user_id : 'enable'}
+                            class="btn btn-xs btn-outline btn-warning">Delete</button>
                     </td>
                 </tr>
             {/each}
@@ -105,4 +114,3 @@
     </table>
 </div>
 
-<!-- disabled={'disabled' ? word.user !== userState.id : 'enable'} -->

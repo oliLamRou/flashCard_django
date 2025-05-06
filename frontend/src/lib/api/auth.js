@@ -1,6 +1,5 @@
-import { goto } from "$app/navigation";
 import { userState } from "$lib/state.svelte";
-import { ACCESS_TOKEN_KEY, BASE_URL } from "./constant";
+import { ACCESS_TOKEN_KEY, BASE_URL } from "$lib/constant";
 
 function save_access_token(data) {
     sessionStorage.setItem(ACCESS_TOKEN_KEY, data.access)

@@ -1,8 +1,8 @@
 <script>
     import { goto } from "$app/navigation";
-	import { api } from "$lib/api";
-	import { _login } from "$lib/auth";
-    import { _register } from "$lib/auth";
+	import { api } from "$lib/api/api";
+	import { _login } from "$lib/api/auth";
+    import { _register } from "$lib/api/auth";
     let username = $state('')
     let password = $state('')
     let authType = $state(true)
@@ -20,7 +20,7 @@
 
 <h1>Sign Up</h1>
 <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-    <form on:submit|preventDefault={sign_up}>
+    <form on:submit|preventDefault={register}>
         <legend class="fieldset-legend">Login</legend>
     
         <label class="label">Username</label>

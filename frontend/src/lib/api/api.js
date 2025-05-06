@@ -1,9 +1,14 @@
 import { goto } from "$app/navigation";
 import { userState } from "$lib/state.svelte";
-import { _refresh } from "./auth";
-import { ACCESS_TOKEN_KEY, BASE_URL } from "./constant";
+import { _refresh } from "$lib/api/auth";
+import { ACCESS_TOKEN_KEY, BASE_URL } from "$lib/constant";
 
 export async function api(endpoint, options = {}) {
+    if (typeof window === 'undefined') {
+        console.log("NO WINDOW");
+        return {}
+    }
+    
     const access_token = sessionStorage.getItem(ACCESS_TOKEN_KEY)
     const url = BASE_URL + endpoint
     const authOptions = {
@@ -25,7 +30,7 @@ export async function api(endpoint, options = {}) {
             response = await fetch(url, authOptions);
         } else {
             //destroy_user
-            goto('/credentials')
+            goto('/auth/credentials')
             throw new Error("Session expired. Please log in again.");
         }
     }

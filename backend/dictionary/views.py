@@ -52,7 +52,7 @@ def create(request):
             word_instance.update(**update_fields)
             return Response(status=201)
         else:
-            return Response(status=405)
+            return Response({"error": "User or ID doesn't match"}, status=409)
     else:
         return Response(status=405)
     
@@ -81,7 +81,6 @@ def read(request):
         .exclude(**{f"{lang_a}": ''})
         .exclude(**{f"{lang_b}__isnull": True})
         .exclude(**{f"{lang_b}": ''})
-        .filter(user=request.user)
         .order_by(*[lang_a])
     ) 
 
@@ -89,7 +88,7 @@ def read(request):
     preference_serialized = PreferenceSerializer(preference, many=True)
     return Response({
         'words': words_serialized.data, 
-        'preference': preference_serialized.data[0],
+        'preferences': preference_serialized.data[0],
         })
 
 @api_view(['POST'])

@@ -65,14 +65,14 @@ def login(request):
 @permission_classes([AllowAny])
 def refresh_tokens(request):
     if request.method == 'GET':
-        print('REFRESH TOKEN: ',RefreshToken.for_user(request.user))
+        # print('REFRESH TOKEN: ',RefreshToken.for_user(request.user))
         refresh_token = request.COOKIES.get('refresh_token', None)
         if refresh_token is None:
             return Response({"error": "No refresh token"}, status=401)
         
         serializer = TokenRefreshSerializer(data={"refresh": refresh_token})
         if serializer.is_valid():
-            print('REFRESH TOKEN: ',RefreshToken.for_user(request.user))
+            # print('REFRESH TOKEN: ',RefreshToken.for_user(request.user))
             return Response(serializer.validated_data, status=200)
         else:
             return Response(status=401)
@@ -113,6 +113,7 @@ def user_info(request):
         user = User.objects.filter(username=request.user).first()
         if user:
             data = {
+                'id': user.id,
                 'username': user.username,
                 'email': user.email,
                 'first_name': user.first_name,

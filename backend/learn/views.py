@@ -1,6 +1,7 @@
 import random
 import math
 
+from django.db.models import Q, F
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
@@ -9,10 +10,7 @@ from rest_framework.views import Response
 
 from dictionary.models import Word
 from dictionary.serializers import WordSerializer
-
-from accounts.serializers import PreferenceSerializer
 from accounts.models import Preference
-
 from learn.models import Score
 
 def get_some_querySet(querySet, perc=1):
@@ -25,79 +23,56 @@ def get_some_querySet(querySet, perc=1):
 @api_view(['GET'])
 def guess(request):
     if request.method == 'GET':
+        preference = Preference.objects.filter(user=request.user).first()
+        lang_from = preference.languageA if preference.learnMode == 'NORMAL' else preference.languageB
+        lang_to = preference.languageB if preference.learnMode == 'NORMAL' else preference.languageA
+
+        print(lang_from, lang_to)
+
         WORDS_GOOD_PERC = 0.01
         WORDS_BAD_PERC = 0.05
 
-        word = Word.objects.filter(user=request.user).order_by("?").first()
-        serialized_word = WordSerializer(word)
+        qs = Word.objects.all() #Start Query
 
-        preference = Preference.objects.filter(user=request.user).first()
-        serialized_preferences = PreferenceSerializer(preference)
+        #Get only user language
+        qs = qs.exclude(Q(**{f"{lang_from}__isnull": True}) | Q(**{f"{lang_from}": ''}))
+        qs = qs.exclude(Q(**{f"{lang_to}__isnull": True}) | Q(**{f"{lang_to}": ''}))
 
+        if (request.user):
+            qs = qs.filter(user=request.user)
 
-        return Response({"word": serialized_word.data, 'preferences': serialized_preferences.data})
+        qs_noScore = qs.filter(scores__isnull=True) #get no score
+        noScore_list = get_some_querySet(qs_noScore)
+
+        qs_withScore = qs.filter(scores__isnull=False) #get with score
+        words_good = qs_withScore.filter(scores__success__gt=F('scores__fail')) #with score + more fail
+        words_bad = qs_withScore.filter(scores__success__lte=F('scores__fail')) #with score + more success
+
+        success_list = get_some_querySet(words_good, WORDS_GOOD_PERC)
+        fail_list = get_some_querySet(words_bad, WORDS_BAD_PERC)
+
+        #Combien and shuffle
+        word_list = noScore_list + success_list + fail_list
+        random.shuffle(word_list)
+        rdn_word = word_list[-1]
+
+        print(f'Guess New Word: {getattr(rdn_word, lang_from)}')
+        words = qs.filter(
+            Q(
+                **{
+                    f'{lang_from}': getattr(rdn_word, lang_from)
+                }
+            )
+        )
+
+        serialized_words = WordSerializer(words, many=True)
+        return Response({"words": serialized_words.data}, status=200)
     
-    return Response(status=402)
-    # # lang_from = preference.languageA if preference.learnMode == preference.LEARN_MODE.normal else preference.languageB
-    # # lang_to = preference.languageB if lang_from == preference.languageA else preference.languageA
-    # lang_to = preference.languageB if preference.learnMode == 'NORMAL' else preference.languageA
-
-    # #New
-    # words_without_score = (
-    #     Word.objects
-    #     .filter(scores__isnull=True)
-    #     # .filter(user=request.user) #Not sure yet.
-    #     .exclude(**{f"{preference.languageA}__isnull": True})
-    #     .exclude(**{f"{preference.languageA}": ''})
-    #     .exclude(**{f"{preference.languageB}__isnull": True})
-    #     .exclude(**{f"{preference.languageB}": ''})
-    #     .order_by("?")
-    # )
-    
-    # #Score
-    # words_with_score = (
-    #     Word.objects
-    #     .filter(scores__isnull=False)
-    #     .exclude(**{f"{preference.languageA}__isnull": True})
-    #     .exclude(**{f"{preference.languageA}": ''})
-    #     .exclude(**{f"{preference.languageB}__isnull": True})
-    #     .exclude(**{f"{preference.languageB}": ''})
-    # )
-    # words_good = words_with_score.filter(scores__success__gt=F('scores__fail'))
-    # words_bad = words_with_score.filter(scores__success__lte=F('scores__fail'))
-
-    # #Get all or some query
-    # words_without_score_list = get_some_querySet(words_without_score)
-    # words_good_list = get_some_querySet(words_good, WORDS_GOOD_PERC)
-    # words_bad_list = get_some_querySet(words_bad, WORDS_BAD_PERC)
-
-    # #Combien and shuffle
-    # word_list = words_without_score_list + words_good_list + words_bad_list
-    # random.shuffle(word_list)
-    # word = word_list[-1]
-
-    # print(f'Guess New Word: {getattr(word, preference.languageA)}')
-
-    # #This is like : filter(FR=word.FR)
-    # otherWord = (
-    #     Word.objects
-    #     .filter(**{f'{lang_to}': getattr(word, lang_to)})
-    #     .exclude(**{f"{preference.languageA}__isnull": True})
-    #     .exclude(**{f"{preference.languageA}": ''})
-    #     .exclude(**{f"{preference.languageB}__isnull": True})
-    #     .exclude(**{f"{preference.languageB}": ''})        
-    # )
-
-    # return Response({"word": word, "otherWord": otherWord, "preference": preference})
-    return Response({"word": serialized_word})
+    return Response(status=405)
 
 @api_view(['POST'])
 def score(request):
     if request.method == "POST":
-        print(f'request: {request.data}')
-        # answer = request.POST.get("answer")
-        # word_id = request.POST.get("wordID")
-
         data = request.data
         if not data:
             return Response(status=404)
@@ -116,7 +91,6 @@ def score(request):
 
         score_entry.save()
 
-        # print(f'New Score for: {score_entry.word.french} fail: {score_entry.fail} success: {score_entry.success}')
         return HttpResponse(status=200)
 
     return HttpResponse(status=200)

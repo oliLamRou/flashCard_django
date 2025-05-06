@@ -15,8 +15,6 @@ export async function update_word(word, score) {
         id: word.id,
         score: score
     }
-
-    console.log("UPDATE", data);
     
     const response = await api('learn/score/', {
         method: 'POST',

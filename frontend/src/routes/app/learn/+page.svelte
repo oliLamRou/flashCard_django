@@ -3,10 +3,16 @@
 	import { userState } from "$lib/state.svelte.js";
 
     let { data } = $props();
-    let word = $state(data.word)
+    let words = $state(data.words)
+    let word = $derived(words[0])
 
+    //var variable = (condition) ? (true block) : (else block)
     let languageA = $state(userState.preferences.languageA)
     let languageB = $state(userState.preferences.languageB)
+    let learnMode = $state(userState.preferences.learnMode)
+
+    let lang_from = $state(learnMode === 'NORMAL' ? languageA : languageB)
+    let lang_to = $state(learnMode === 'NORMAL' ? languageB : languageA)
     
     let showAnswer = $state(false)
 
@@ -22,14 +28,16 @@
 
 <div class="card bg-secondary m-3">
     <div class="card-body flex flex-col flex-grow">
-        <p>{languageA}</p>
+        <p>{lang_from}</p>
         <p class="card-title font-sans text-4xl capitalize">
-            {word[languageA]}
+            {word[lang_from]}
         </p>
-        <p class="mt-2">{languageB}</p>
+        <p class="mt-2">{lang_to}</p>
+        {#each words as word_}
         <p class="font-sans text-3xl">
-            {showAnswer ? word[languageB] : '--'}
-        </p>
+            {showAnswer ? word_[lang_to] : '--'}
+        </p>            
+        {/each}
         <p class="mt-2">Description</p>
         <p class="font-sans text-lg">{word.description || '--'}</p>
         <div class="card-actions mt-8">
@@ -42,24 +50,3 @@
         </div>
     </div>
 </div>
-
-<!-- <div class="min-h-screen flex items-center justify-center">
-    <div class="card w-full bg-base-200 shadow-xl rounded-2xl max-w-md">
-        <div class="card-body">
-          <h2 class="card-title">Can you guess the word ?</h2>
-          <card-body>
-            <p>{languageA} - { word[languageA] }</p>
-            <label class="swap">
-                <input type="checkbox" bind:checked={showAnswer}/>
-                <div class="swap-on">{ word[languageB] }</div>
-                <div class="swap-off">click for answer</div>
-            </label>
-            </card-body>
-            <p>{ word['description'] }</p>
-            <div class="card-actions justify-end">
-                <button onclick={() => next_word(1)} class="btn btn-primary">Good</button>
-                <button onclick={() => next_word(-1)} class="btn btn-neutral">Bad</button>
-            </div>
-        </div>
-    </div>
-</div> -->

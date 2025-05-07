@@ -58,14 +58,6 @@
             words = data.words
         }
     }
-
-    onMount(() => {
-        console.log(userState);
-        console.log(words[0]);
-        
-        
-    })
-
 </script>
 
 <h1>Hi {username}!</h1>

@@ -19,8 +19,7 @@
     const next_word = (async(score) => {
         update_word(word, score)
         const newWord = await load_word()
-
-        word = newWord.word
+        words = newWord.words
         showAnswer = false
     })
 

@@ -1,7 +1,7 @@
 import { goto } from "$app/navigation";
 import { userState } from "$lib/state.svelte";
 import { _refresh } from "$lib/api/auth";
-import { ACCESS_TOKEN_KEY, BASE_URL } from "$lib/constant";
+import { ACCESS_TOKEN_KEY, BASE_URL, REFRESH_TOKEN_KEY } from "$lib/constant";
 
 export async function api(endpoint, options = {}) {
     if (typeof window === 'undefined') {
@@ -9,15 +9,13 @@ export async function api(endpoint, options = {}) {
         return {}
     }
     
-    const access_token = sessionStorage.getItem(ACCESS_TOKEN_KEY)
     const url = BASE_URL + endpoint
-    const authOptions = {
-        credentials: "include",
+    let authOptions = {
         ...options,
         headers: {
             ...options.headers,
-            'Authorization': `Bearer ${ access_token }`,
-          }
+            'Authorization': `Bearer ${ sessionStorage.getItem(ACCESS_TOKEN_KEY) }`,
+            }
     };
 
     let response = await fetch(url, authOptions);
@@ -25,8 +23,7 @@ export async function api(endpoint, options = {}) {
     if (response.status === 401) {
         response = await _refresh();
         if (response.status === 200) {
-            access_token = sessionStorage.getItem(ACCESS_TOKEN_KEY)
-            authOptions.headers['Authorization'] = `Bearer ${ access_token }`;
+            authOptions.headers['Authorization'] = `Bearer ${ sessionStorage.getItem(ACCESS_TOKEN_KEY) }`;
             response = await fetch(url, authOptions);
         } else {
             //destroy_user

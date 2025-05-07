@@ -1,8 +1,9 @@
 import { userState } from "$lib/state.svelte";
-import { ACCESS_TOKEN_KEY, BASE_URL } from "$lib/constant";
+import { ACCESS_TOKEN_KEY, BASE_URL, REFRESH_TOKEN_KEY } from "$lib/constant";
 
-function save_access_token(data) {
+async function save_access_token(data) {
     sessionStorage.setItem(ACCESS_TOKEN_KEY, data.access)
+    sessionStorage.setItem(REFRESH_TOKEN_KEY, data.refresh)
 }
 
 export async function _register(username, password) {
@@ -28,7 +29,6 @@ export async function _login(username, password) {
         password,
     }
     const response = await fetch(url, {
-        credentials: "include",
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
@@ -48,8 +48,11 @@ export async function _login(username, password) {
 export async function _refresh() {
     const url = BASE_URL + 'auth/refresh/'
     const response = await fetch(url, {
-        credentials: "include",
-        method: 'GET',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'refresh': sessionStorage.getItem('refresh_token')})
     })
     
     if (response.ok) {

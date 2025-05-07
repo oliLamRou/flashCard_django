@@ -73,6 +73,11 @@ REST_FRAMEWORK = {
     ],
 }
 
+# from datetime import timedelta
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
+# }
+
 #CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",

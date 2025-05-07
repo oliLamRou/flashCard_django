@@ -24,7 +24,7 @@ export async function api(endpoint, options = {}) {
 
     if (response.status === 401) {
         response = await _refresh();
-        if (response.status === 201) {
+        if (response.status === 200) {
             access_token = sessionStorage.getItem(ACCESS_TOKEN_KEY)
             authOptions.headers['Authorization'] = `Bearer ${ access_token }`;
             response = await fetch(url, authOptions);

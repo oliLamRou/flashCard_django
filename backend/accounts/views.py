@@ -46,33 +46,23 @@ def login(request):
 
         if user is not None:
             refresh = RefreshToken.for_user(user)
-            response = Response({
+            return Response({
                 "access": str(refresh.access_token),
-            })
+                "refresh": str(refresh)
+            }, status=200)
 
-            response.set_cookie(
-                key="refresh_token",
-                value=str(refresh),
-                httponly=True,
-                secure=True,
-                samesite="None",
-                path="/api/auth/refresh/"
-            )
-            return response
         return Response({"error": "Invalid credentials"}, status=401)    
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([AllowAny])
 def refresh_tokens(request):
-    if request.method == 'GET':
-        # print('REFRESH TOKEN: ',RefreshToken.for_user(request.user))
-        refresh_token = request.COOKIES.get('refresh_token', None)
+    if request.method == 'POST':
+        refresh_token = request.data.get('refresh', None)
         if refresh_token is None:
             return Response({"error": "No refresh token"}, status=401)
         
         serializer = TokenRefreshSerializer(data={"refresh": refresh_token})
         if serializer.is_valid():
-            # print('REFRESH TOKEN: ',RefreshToken.for_user(request.user))
             return Response(serializer.validated_data, status=200)
         else:
             return Response(status=401)

@@ -3,7 +3,13 @@ import { ACCESS_TOKEN_KEY, BASE_URL, REFRESH_TOKEN_KEY } from "$lib/constant";
 
 async function save_access_token(data) {
     sessionStorage.setItem(ACCESS_TOKEN_KEY, data.access)
-    sessionStorage.setItem(REFRESH_TOKEN_KEY, data.refresh)
+    localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh)
+}
+
+export function _remove_user() {
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY)
+    localStorage.removeItem(REFRESH_TOKEN_KEY)
+    Object.assign(userState, {})
 }
 
 export async function _register(username, password) {
@@ -52,7 +58,7 @@ export async function _refresh() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 'refresh': sessionStorage.getItem('refresh_token')})
+        body: JSON.stringify({ 'refresh': localStorage.getItem(REFRESH_TOKEN_KEY)})
     })
     
     if (response.ok) {
@@ -64,9 +70,4 @@ export async function _refresh() {
         console.error("Login failed:");
         return response
     }
-}
-
-export function _remove_user() {
-    sessionStorage.removeItem(ACCESS_TOKEN_KEY)
-    Object.assign(userState, {})
 }

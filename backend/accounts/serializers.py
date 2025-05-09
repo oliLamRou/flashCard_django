@@ -5,4 +5,13 @@ from accounts.models import Preference
 class PreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Preference
-        fields = ['languageA', 'languageB', 'learnMode']
+        fields = [
+            'languageA', 
+            'languageB', 
+            'learnMode',
+            'learnUserWordsPerc',
+            'learnFavoriteWordsPerc',
+            'learnNewWordsPerc',
+            'learnFailWordsPerc',
+            'learnSuccessWordsPerc',
+        ]

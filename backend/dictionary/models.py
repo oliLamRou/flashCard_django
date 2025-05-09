@@ -27,6 +27,10 @@ class Word(models.Model):
 
     def get_score_for(self, user):
         return self.score.filter(user=user).first()
+    
+    def __str__(self):
+        # return super().__str__()
+        return f'User: {self.user}\nFR: {self.FR}\nKR: {self.KR}\nEN: {self.EN}\nDescription: {self.description}\nWC: {self.word_class}\nCreated: {self.create_at}\n'
 
 '''
 noun	명사	[myeong-sa]

@@ -27,10 +27,11 @@ def guess(request):
         lang_from = preference.languageA if preference.learnMode == 'NORMAL' else preference.languageB
         lang_to = preference.languageB if preference.learnMode == 'NORMAL' else preference.languageA
 
-        print(lang_from, lang_to)
-
-        WORDS_GOOD_PERC = 0.01
-        WORDS_BAD_PERC = 0.05
+        newPerc = preference.learnNewWordsPerc
+        userPerc = preference.learnUserWordsPerc
+        favPerc = preference.learnFavoriteWordsPerc
+        failPerc = preference.learnFailWordsPerc
+        succPerc = preference.learnSuccessWordsPerc
 
         qs = Word.objects.all() #Start Query
 
@@ -38,18 +39,18 @@ def guess(request):
         qs = qs.exclude(Q(**{f"{lang_from}__isnull": True}) | Q(**{f"{lang_from}": ''}))
         qs = qs.exclude(Q(**{f"{lang_to}__isnull": True}) | Q(**{f"{lang_to}": ''}))
 
-        if (request.user):
+        if (userPerc < 1):
             qs = qs.filter(user=request.user)
 
         qs_noScore = qs.filter(scores__isnull=True) #get no score
-        noScore_list = get_some_querySet(qs_noScore)
+        noScore_list = get_some_querySet(qs_noScore, newPerc)
 
         qs_withScore = qs.filter(scores__isnull=False) #get with score
         words_good = qs_withScore.filter(scores__success__gt=F('scores__fail')) #with score + more fail
         words_bad = qs_withScore.filter(scores__success__lte=F('scores__fail')) #with score + more success
 
-        success_list = get_some_querySet(words_good, WORDS_GOOD_PERC)
-        fail_list = get_some_querySet(words_bad, WORDS_BAD_PERC)
+        success_list = get_some_querySet(words_good, succPerc)
+        fail_list = get_some_querySet(words_bad, failPerc)
 
         #Combien and shuffle
         word_list = noScore_list + success_list + fail_list

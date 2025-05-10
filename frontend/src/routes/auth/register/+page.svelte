@@ -13,22 +13,31 @@
         const res_register = await _register(username, password)
         if (res_register.status !== 201) { return }
 
-        const response = await _login(username, password)
+        const response = await _login(username, password)        
+        if (response.ok) {
+            goto('/app/words')
+        }
+    }
+
+    const signIn = () => {
+        goto('/auth/credentials')
     }
 
 </script>
 
-<h1>Sign Up</h1>
-<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-    <form on:submit|preventDefault={register}>
-        <legend class="fieldset-legend">Login</legend>
-    
-        <label class="label">Username</label>
-        <input type="username" class="input validator" required placeholder="Username" bind:value={username}/>
-    
-        <label class="label">Password</label>
-        <input type="password" class="input validator" required placeholder="Password" bind:value={password}/>
-    
-        <button class="btn btn-neutral mt-4" type="submit">Sign Up</button>
-    </form>    
-</fieldset>
+<div class="min-h-screen flex items-center justify-center">
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+        <form on:submit|preventDefault={register}>
+            <legend class="fieldset-legend">Create An Account</legend>
+        
+            <label class="label">Username</label>
+            <input type="username" class="input validator" required bind:value={username}/>
+        
+            <label class="label">Password</label>
+            <input type="password" class="input validator" required bind:value={password}/>
+        
+            <button class="btn btn-block btn-neutral mt-4" type="submit">Sign Up</button>
+        </form>    
+        <a class="link justify-center" on:click={signIn}>Already Having An Account?</a>
+    </fieldset>
+</div>

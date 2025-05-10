@@ -13,12 +13,9 @@
             goto('/app/words')
         }
     }
-    const refresh = async() => {
-        _refresh()
-    }
 
     const signUp = () => {
-        goto('/register')
+        goto('/auth/register')
     }
 </script>
 
@@ -33,8 +30,8 @@
             <label class="label">Password</label>
             <input type="password" class="input validator" required placeholder="Password" bind:value={password}/>
         
-            <button class="btn btn-neutral mt-4" type="submit">Login</button>
+            <button class="btn btn-block btn-neutral mt-4" type="submit">Login</button>
         </form>    
-        <button class="btn btn-neutral mt-4" on:click={signUp}>sign up</button>
+        <a class="link justify-center" on:click={signUp}>Create New Account here!</a>
     </fieldset>
 </div>

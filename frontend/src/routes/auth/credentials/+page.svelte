@@ -10,7 +10,7 @@
     const login = async() => {        
         const response = await _login(username, password)        
         if (response.ok) {
-            goto('/app/words')
+            goto('/app/learn')
         }
     }
 

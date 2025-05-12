@@ -55,6 +55,10 @@ def guess(request):
         #Combien and shuffle
         word_list = noScore_list + success_list + fail_list
         random.shuffle(word_list)
+        
+        if not word_list:
+            return Response({"error": "No Words"}, status=400)
+        
         rdn_word = word_list[-1]
 
         print(f'Guess New Word: {getattr(rdn_word, lang_from)}')

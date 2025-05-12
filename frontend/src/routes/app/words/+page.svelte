@@ -17,7 +17,7 @@
 
 
     let searchValue = $state()
-    let userWords = $state(false)
+    let userWords = $state(true)
 
     let filtered_words = $derived.by(() => {
         let result = words
@@ -66,7 +66,7 @@
 <input type="text" placeholder="Search" class="input" bind:value={searchValue}/>
 <label class="label">
     <input type="checkbox" class="toggle" bind:checked={userWords}/>
-    Your Word Only
+    Filter Your Words
   </label>
 <div class="overflow-x-auto">
     <table class="table table-zebra">

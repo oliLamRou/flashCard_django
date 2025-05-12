@@ -3,7 +3,7 @@ import { api } from "$lib/api/api"
 export async function load_word() {
     const response = await api('learn/guess/', {
         method: 'GET'
-    })    
+    })
 
     if (response.ok) {
         return await response.json()

@@ -17,7 +17,7 @@
 
 
     let searchValue = $state()
-    let usersWords = $state(false)
+    let userWords = $state(true)
 
     let filtered_words = $derived.by(() => {
         let result = words
@@ -65,8 +65,8 @@
 <button onclick={batch_import} class="btn btn-secondary btn-sm">Import</button>
 <input type="text" placeholder="Search" class="input" bind:value={searchValue}/>
 <label class="label">
-    <input type="checkbox" class="toggle" bind:checked={usersWords}/>
-    Other User Words
+    <input type="checkbox" class="toggle" bind:checked={userWords}/>
+    Filter Your Words
   </label>
 <div class="overflow-x-auto">
     <table class="table table-zebra">

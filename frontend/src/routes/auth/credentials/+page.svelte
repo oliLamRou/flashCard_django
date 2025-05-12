@@ -13,28 +13,25 @@
             goto('/app/words')
         }
     }
-    const refresh = async() => {
-        _refresh()
-    }
 
     const signUp = () => {
-        goto('/register')
+        goto('/auth/register')
     }
 </script>
 
 <div class="min-h-screen flex items-center justify-center">
     <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
         <form on:submit|preventDefault={login}>
-            <legend class="fieldset-legend">Login</legend>
+            <legend class="fieldset-legend">Welcome Back!</legend>
         
             <label class="label">Username</label>
-            <input type="username" class="input validator" required placeholder="Email" bind:value={username}/>
+            <input type="username" class="input validator" required bind:value={username}/>
         
             <label class="label">Password</label>
-            <input type="password" class="input validator" required placeholder="Password" bind:value={password}/>
+            <input type="password" class="input validator" required bind:value={password}/>
         
-            <button class="btn btn-neutral mt-4" type="submit">Login</button>
+            <button class="btn btn-block btn-neutral mt-4" type="submit">Login</button>
         </form>    
-        <button class="btn btn-neutral mt-4" on:click={signUp}>sign up</button>
+        <a class="link justify-center" on:click={signUp}>Create New Account here!</a>
     </fieldset>
 </div>

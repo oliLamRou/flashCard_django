@@ -2,6 +2,16 @@
 	import { goto } from "$app/navigation";
 	import { appState, userState } from "$lib/state.svelte";
 	import { create } from "$lib/api/word.js";
+	import { fade } from "svelte/transition";
+
+    let showToast = $state(false);
+
+	function triggerToast() {
+		showToast = true;
+		setTimeout(() => {
+			showToast = false;
+		}, 3000);
+	}
 
     let languageA = $state(userState.preferences.languageA)
     let languageB = $state(userState.preferences.languageB)
@@ -13,9 +23,12 @@
 
     const save = async() => {
         const response = await create(word)
-        //This is weak
         if (response.ok) {
-            goto('/app/words')
+            triggerToast()
+            word.word_languageA = null
+            word.word_languageB = null
+            word.description = null
+            word.word_class = word_classes.undef
         }
     }
 
@@ -48,3 +61,11 @@
         <button type="submit" class="btn btn-neutral">Save</button>
     </form>
 </fieldset>
+
+{#if showToast}
+<div transition:fade class="toast toast-center">
+    <div class="alert alert-success">
+        <span>Word Created</span>
+    </div>
+</div>
+{/if}

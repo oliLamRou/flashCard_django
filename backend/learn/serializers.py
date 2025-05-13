@@ -1,7 +1,12 @@
 from learn.models import Score
 from rest_framework import serializers
 
-class ScoreSerializer(serializers.Serializer):
+class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Score
-        fields = '__all__'
+        fields = [
+            'fail', 
+            'success', 
+            'last_try', 
+            'archive'
+        ]

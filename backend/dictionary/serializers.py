@@ -17,5 +17,6 @@ class WordSerializer(serializers.ModelSerializer):
                 'fail': score[0].fail,
                 'success': score[0].success,
                 'last_try': score[0].last_try,
+                'archive': score[0].archive,
             }
         return None

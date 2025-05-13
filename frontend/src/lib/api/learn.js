@@ -6,14 +6,16 @@ export async function load_word() {
     })
 
     if (response.ok) {
-        return await response.json()
+        const data = await response.json()
+        return data
     }
 }
 
-export async function update_word(word, score) {
+export async function update_word(word, score, archiveIt) {
     const data = {
         id: word.id,
-        score: score
+        score: score,
+        archiveIt: archiveIt
     }
     
     const response = await api('learn/score/', {

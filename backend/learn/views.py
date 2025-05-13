@@ -1,7 +1,7 @@
 import random
 import math
 
-from django.db.models import Q, F
+from django.db.models import Q, F, Prefetch
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
@@ -12,6 +12,7 @@ from dictionary.models import Word
 from dictionary.serializers import WordSerializer
 from accounts.models import Preference
 from learn.models import Score
+from learn.serializers import ScoreSerializer
 
 def get_some_querySet(querySet, perc=1):
     queryList = list(querySet)
@@ -33,7 +34,16 @@ def guess(request):
         failPerc = preference.learnFailWordsPerc
         succPerc = preference.learnSuccessWordsPerc
 
-        qs = Word.objects.all() #Start Query
+        qs = Word.objects.prefetch_related(
+           Prefetch(
+                'scores',
+                queryset=Score.objects.filter(user=request.user),
+                to_attr='user_scores'
+            )
+        ).all() #Start Query
+
+        #Archive
+        qs = qs.exclude(scores__archive=True)
 
         #Get only user language
         qs = qs.exclude(Q(**{f"{lang_from}__isnull": True}) | Q(**{f"{lang_from}": ''}))
@@ -61,7 +71,7 @@ def guess(request):
         
         rdn_word = word_list[-1]
 
-        print(f'Guess New Word: {getattr(rdn_word, lang_from)}')
+        #Get all the match in an array
         words = qs.filter(
             Q(
                 **{
@@ -93,6 +103,10 @@ def score(request):
             score_entry.fail += 1
         elif data.get('score') == 1:
             score_entry.success += 1
+
+        archiveIt = data.get("archiveIt", False)
+        if archiveIt:
+            score_entry.archive = True
 
         score_entry.save()
 

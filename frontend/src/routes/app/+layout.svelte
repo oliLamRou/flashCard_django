@@ -4,6 +4,8 @@
 	import { _remove_user } from "$lib/api/auth";
 	import { api } from "$lib/api/api";
 	import { userState } from "$lib/state.svelte";
+
+    import CircumIcon from "@klarr-agency/circum-icons-svelte";
     
     let { children } = $props();
 
@@ -14,18 +16,26 @@
 
 </script>
 
-<div class="navbar bg-base-100 shadow-sm">
-    <div class="flex-1">
-        <a href="/app/words" class="btn btn-ghost text-xl">Words</a>
+<div class="navbar bg-base-100 shadow-sm flex justify-between">
+    <div>
+        <a href="/app/learn" class="btn btn-ghost text-xl">
+            <CircumIcon name="credit_card_2"/>
+        </a>
     </div>
-    <div class="flex-1">
-        <a href="/app/learn" class="btn btn-ghost text-xl">Learn</a>
+    <div>
+        <a href="/app/words" class="btn btn-ghost text-xl">
+            <CircumIcon name="edit"/>
+        </a>
     </div>
-    <div class="flex-1">
-        <a href="/app/preferences" class="btn btn-ghost text-xl">Preferences</a>
+    <div>
+        <a href="/app/preferences" class="btn btn-ghost text-xl">
+            <CircumIcon name="settings"/>
+        </a>
     </div>
-    <div class="flex-1">
-        <button onclick={logout} class="btn btn-ghost text-xl">Logout</button>
+    <div>
+        <button onclick={logout} class="btn btn-ghost text-xl">
+            <CircumIcon name="logout"/>
+        </button>
     </div>
 </div>
 

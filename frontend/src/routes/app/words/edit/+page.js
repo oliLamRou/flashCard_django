@@ -14,19 +14,3 @@ export function load({url}) {
         }
     }
 }
-
-// {
-//     "id": 28,
-//     "user_score": {
-//         "fail": 3,
-//         "success": 9,
-//         "last_try": "2025-05-05"
-//     },
-//     "FR": "bibliothèque",
-//     "KR": "두서관",
-//     "EN": "",
-//     "description": "",
-//     "word_class": "n",
-//     "create_at": "2025-04-24",
-//     "user": 1
-// }

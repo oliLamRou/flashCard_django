@@ -30,7 +30,7 @@
             <label class="label">Password</label>
             <input type="password" class="input validator" required bind:value={password}/>
         
-            <button class="btn btn-block btn-neutral mt-4" type="submit">Login</button>
+            <button class="btn btn-block btn-primary mt-4" type="submit">Login</button>
         </form>    
         <a class="link justify-center" on:click={signUp}>Create New Account here!</a>
     </fieldset>

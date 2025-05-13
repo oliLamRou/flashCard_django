@@ -1,39 +1,37 @@
-# ToDo
-- Setup switch to use local or render db
-- setup superuser in both
-- sign up and sign in page
-- how to check if log in?
-- redirect if not log in ?
+# Gachi Cards
 
-- DB word
-    - ~CRUD words in 2 language~
+### Goal
+I'm on a missing to become fluent in Korean and becoming a developper. While I'm more interested in the backend part I want general knowledge. This is serve the whole purpose. I'm going to keep the frontend and design as simple as possible and I will try to bring a tone of features with a good backend.
+    
+### Main Technology
+-> Backend: Django, ProgreSQL, Request Codes Status  
+-> Frontend: HTML, JS, svelte, svelteKit
 
-- DB score
-    - ~foreign key from word~
-    - ~add score bad or success~
+## Phase 1
+- Backend
+    - ~~BD Structure~~
+    - ~~Basic end points~~
+    - add archive to 'mute' a word for a user  
 
-- UX
-    - ~home, words, learn~
-    - ~learn auto random new word after score~
+- Frontend
+    - ~~Simple Style and mobile layout~~
+    - FlashCard Details and Options
 
- - features
-    - ~list answer of all possibility~
-        - having good for specific option ?
-        - word type is important and could remove some confusion: ADV, noun, verb particule ...
-    - personal note ?
-    - word list with stats and can see group by
-        group by new old, good bad, type...
-    - word to speak ?
-    - save good bad word from current session. repeat till all good ?
-        - maybe better to get 20 and clear the stack ?
+- Cloud Deployment
+    - Render(backend)
+    - Vercel(frontend)
 
+### Phase 2
+- Learn Page
+    - Learn page should be the main page.
+    - Learn from there
+    - See your stats
+    - Interaction with list and current card
+        - bring option here instead of going on all words pages.
+    
+- Social feature
+    - Word lists where many users can learn
 
-# phase 2
-- svelte frontend
-- hosting
-- user and auth
-- heroku?
-
-### Card info
-- francais, korean, type, note
-    - need some info for particule, adverbe sometime
+- Stats
+    - Dashboard of your learning 
+    - recap email end of week

@@ -97,19 +97,39 @@ def score(request):
             return Response(status=404)
         
         score_entry, created = Score.objects.get_or_create(word=word, user=request.user)
-        print("CREATE:", created)
         
         if data.get('score') == -1:
             score_entry.fail += 1
         elif data.get('score') == 1:
             score_entry.success += 1
 
-        archiveIt = data.get("archiveIt", False)
-        if archiveIt:
-            score_entry.archive = True
-
         score_entry.save()
 
-        return HttpResponse(status=200)
+        return Response(status=200)
 
-    return HttpResponse(status=200)
+    return Response(status=405)
+
+@api_view(['POST'])
+def archive(request):
+    if request.method == "POST":
+        data = request.data
+        if not data:
+            return Response(status=404)
+
+        word = get_object_or_404(Word, id=data.get('id'))
+        if not word:
+            return Response(status=404)
+    
+        score_entry, created = Score.objects.get_or_create(word=word, user=request.user)
+
+        if data.get("archive") == True:
+            score_entry.archive = True
+        elif data.get("archive") == False:
+            score_entry.archive = False
+        else:
+            return Response(status=400)
+            
+        score_entry.save()
+        return Response(status=200)   
+    
+    return Response(status=405)     

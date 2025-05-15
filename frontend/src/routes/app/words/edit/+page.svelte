@@ -33,10 +33,10 @@
     }
 
 </script>
-
-<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+<div class="min-h-screen flex items-center justify-center">
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
     <form onsubmit={save}>
-        <legend class="fieldset-legend">Write a word and it's translation</legend>
+        <legend class="fieldset-legend">{word.word_languageA ? 'Edit Word' : 'New Word'}</legend>
     
         <label for='id' class="label">{languages[languageA]}</label>
         <input bind:value={word.word_languageA} type="text" class="input validator" required minlength="2"/>
@@ -53,14 +53,15 @@
             {/each}
         </select>
 
-        <label for='id' class="label">Description</label>
-        <input bind:value={word.description} type="text" class="input"/>
+        <!-- <label for='id' class="label">Description</label>
+        <input bind:value={word.description} type="text" class="input"/> -->
 
         <div class="divider"></div>
         
-        <button type="submit" class="btn btn-neutral">Save</button>
+        <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </fieldset>
+</div>
 
 {#if showToast}
 <div transition:fade class="toast toast-center">

@@ -82,6 +82,6 @@
 
         <div class="divider"></div>
 
-        <button onclick={save} class="btn btn-neutral">Save</button>
+        <button onclick={save} class="btn btn-primary">Save</button>
     </fieldset>
 </div>

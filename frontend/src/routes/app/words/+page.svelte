@@ -15,7 +15,6 @@
     let username = $state(userState.user_info.username)
     let user_id = $state(userState.user_info.id)
 
-
     let searchValue = $state()
     let userWords = $state(true)
 
@@ -58,38 +57,50 @@
             words = data.words
         }
     }
+
+    const get_score = (word) => {
+        if (!word?.user_score) {
+            return '--'
+        }
+        return word.user_score.fail - word.user_score.success
+    }
 </script>
 
-<h1>Hi {username}!</h1>
-<button onclick={create} class="btn btn-secondary btn-sm">New</button>
-<button onclick={batch_import} class="btn btn-secondary btn-sm">Import</button>
-<input type="text" placeholder="Search" class="input" bind:value={searchValue}/>
-<label class="label">
-    <input type="checkbox" class="toggle" bind:checked={userWords}/>
-    Filter Your Words
-  </label>
+<div>
+    <button onclick={create} class="btn btn-secondary btn-sm">New</button>
+    <button onclick={batch_import} disabled class="btn btn-secondary btn-sm">Import</button>
+</div>
+<div class="flex">
+    <label class="label mx-2">
+        <input type="checkbox" class="toggle" bind:checked={userWords}/>
+        Filter Your Words
+    </label>
+    <input type="text" placeholder="Search" class="input grow" bind:value={searchValue}/>
+</div>    
 <div class="overflow-x-auto">
-    <table class="table table-zebra">
+    <table class="table table-zebra table-sm">
         <thead>            
             <tr>
-                <th>Word Class</th>
-                <th>{languageA}</th>
-                <th>{languageB }</th>
-                <th>Description</th>
-                <th>Fail</th>
-                <th>Success</th>
+                <th>Archived</th>
+                <th>Translation</th>
+                <th class="min-w-3">Word Class</th>
+                <th class="min-w-1 text-right">Score</th>
                 <th>Options</th>
             </tr>
         </thead>
         <tbody>
             {#each filtered_words as word}
                 <tr>
-                    <td class="capitalize">{ word_classes[word.word_class] }</td>
-                    <td class="capitalize">{ word[languageA] }</td>
-                    <td class="capitalize">{ word[languageB] }</td>
-                    <td>{ word.description }</td>
-                    <td>{ word.user_score?.fail }</td>
-                    <td>{ word.user_score?.success }</td>
+                    <td>
+                        <input type="checkbox" class="checkbox" checked={"checked" ? word?.user_score?.archive : ""} disabled/>
+                    </td>
+                    <td>
+                        {languageA}: { word[languageA] }
+                        <br/>
+                        {languageB}: { word[languageB] }
+                    </td>                    
+                    <td>{word_classes[word.word_class]}</td>
+                    <td class="text-right">{get_score(word)}</td>
                     <td>
                         <button 
                             onclick={() => edit(word)}
@@ -98,11 +109,10 @@
                         <button 
                             onclick={() => remove(word.id)} 
                             disabled={'disabled' ? word.user !== user_id : 'enable'}
-                            class="btn btn-xs btn-outline btn-warning">Delete</button>
+                            class="btn btn-xs btn-outline btn-error">Delete</button>
                     </td>
                 </tr>
             {/each}
         </tbody>
     </table>
 </div>
-

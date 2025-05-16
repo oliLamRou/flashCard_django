@@ -4,6 +4,8 @@
     import { api } from "$lib/api/api";
 	import { appState, userState } from "$lib/state.svelte";
 	import { load_words, remove_word } from "$lib/api/words";
+    import CircumIcon from "@klarr-agency/circum-icons-svelte";
+	import { archive_word } from "$lib/api/learn";
 
     const { data } = $props()
     let words = $state(data.words)
@@ -17,6 +19,8 @@
 
     let searchValue = $state()
     let userWords = $state(true)
+
+    let bookmarked = $state(false)
 
     let filtered_words = $derived.by(() => {
         let result = words
@@ -64,24 +68,31 @@
         }
         return word.user_score.fail - word.user_score.success
     }
+
+    const archive = async(word) => {
+        const toArchive = word.user_score.archive ? false : true
+        const response = await archive_word(word, toArchive)
+        if (response.ok) {
+            const data = await load_words()
+            words = data.words
+        }
+    }
 </script>
 
-<div>
-    <button onclick={create} class="btn btn-secondary btn-sm">New</button>
-    <button onclick={batch_import} disabled class="btn btn-secondary btn-sm">Import</button>
-</div>
-<div class="flex">
+<div class="flex m-3">
+    <button onclick={create} class="btn btn-sm btn-primary mr-2">New</button>
+    <button onclick={batch_import} disabled class="btn btn-sm btn-primary">Import</button>
     <label class="label mx-2">
-        <input type="checkbox" class="toggle" bind:checked={userWords}/>
-        Filter Your Words
+    <input type="text" placeholder="Search" class="input input-sm grow" bind:value={searchValue}/>
+    <input type="checkbox" class="toggle toggle-sm" bind:checked={userWords}/>
+        Your Words
     </label>
-    <input type="text" placeholder="Search" class="input grow" bind:value={searchValue}/>
-</div>    
+</div>
+
 <div class="overflow-x-auto">
     <table class="table table-zebra table-sm">
         <thead>            
-            <tr>
-                <th>Archived</th>
+            <tr class="text-xs bg-base-300">
                 <th>Translation</th>
                 <th class="min-w-3">Word Class</th>
                 <th class="min-w-1 text-right">Score</th>
@@ -92,9 +103,6 @@
             {#each filtered_words as word}
                 <tr>
                     <td>
-                        <input type="checkbox" class="checkbox" checked={"checked" ? word?.user_score?.archive : ""} disabled/>
-                    </td>
-                    <td>
                         {languageA}: { word[languageA] }
                         <br/>
                         {languageB}: { word[languageB] }
@@ -102,17 +110,41 @@
                     <td>{word_classes[word.word_class]}</td>
                     <td class="text-right">{get_score(word)}</td>
                     <td>
+                        <!-- <button 
+                            onclick={() => bookmarked = !bookmarked}
+                            disabled={'disabled' ? word.user !== user_id : 'enable'}
+                            class="btn btn-xs btn-circle btn-warning {bookmarked ? 'btn-soft' : ''}">
+                            <CircumIcon name="bookmark" size=15px/>
+                        </button>                         -->
+                        <button 
+                            onclick={() => archive(word)}
+                            disabled={'disabled' ? word.user !== user_id : 'enable'}
+                            class="btn btn-xs btn-circle btn-info {word?.user_score?.archive ? 'btn-soft' : ''}">
+                            <CircumIcon name={word?.user_score?.archive ? 'unread' : 'read'} size=15px/>
+                        </button>
                         <button 
                             onclick={() => edit(word)}
                             disabled={'disabled' ? word.user !== user_id : 'enable'}
-                            class="btn btn-xs btn-outline btn-secondary">Edit</button>
+                            class="btn btn-xs btn-circle btn-secondary">
+                            <CircumIcon name="edit" size=15px/>
+                        </button>                        
                         <button 
                             onclick={() => remove(word.id)} 
                             disabled={'disabled' ? word.user !== user_id : 'enable'}
-                            class="btn btn-xs btn-outline btn-error">Delete</button>
+                            class="btn btn-circle btn-xs btn-error">
+                            <CircumIcon name="trash" size=15px/>
+                        </button>                                                
+                        <!-- <label>
+                            <input type="checkbox" disabled class="toggle" checked={"checked" ? word?.user_score?.archive : ""}/>
+                            archived
+                        </label> -->
                     </td>
                 </tr>
             {/each}
         </tbody>
     </table>
 </div>
+
+<style>
+
+</style>

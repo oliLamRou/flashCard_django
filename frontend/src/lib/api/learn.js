@@ -11,11 +11,10 @@ export async function load_word() {
     }
 }
 
-export async function update_word(word, score, archiveIt) {
+export async function update_word(word, score) {
     const data = {
         id: word.id,
         score: score,
-        archiveIt: archiveIt
     }
     
     const response = await api('learn/score/', {
@@ -26,5 +25,22 @@ export async function update_word(word, score, archiveIt) {
         },
     })
 
+    return response
+}
+
+export async function archive_word(word, archive=true) {
+    const data = {
+        id: word.id,
+        archive: archive
+    }
+
+    const response = await api('learn/archive/', {
+        method: 'POST', 
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    
     return response
 }

@@ -8,6 +8,6 @@
     
 </script>
 
-<Stats/>
+<!-- <Stats/> -->
 <Flashcard words={words}/>
-<Options/>
+<!-- <Options words={words}/> -->

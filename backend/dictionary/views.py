@@ -64,32 +64,32 @@ def get_word_classes(request):
 
 @api_view(['GET'])
 def read(request):
-    preference = Preference.objects.filter(user=request.user)
-    lang_a = preference.first().languageA
-    lang_b = preference.first().languageB
+    if request.method == 'GET':
+        preference = Preference.objects.filter(user=request.user)
+        lang_a = preference.first().languageA
+        lang_b = preference.first().languageB
 
-    words = (
-        Word.objects
-        .prefetch_related(
-           Prefetch(
-                'scores',
-                queryset=Score.objects.filter(user=request.user),
-                to_attr='user_scores'
+        words = (
+            Word.objects
+            .prefetch_related(
+            Prefetch(
+                    'scores',
+                    queryset=Score.objects.filter(user=request.user),
+                    to_attr='user_scores'
+                )
             )
-        )
-        .exclude(**{f"{lang_a}__isnull": True})
-        .exclude(**{f"{lang_a}": ''})
-        .exclude(**{f"{lang_b}__isnull": True})
-        .exclude(**{f"{lang_b}": ''})
-        .order_by(*[lang_a])
-    ) 
+            .exclude(**{f"{lang_a}__isnull": True})
+            .exclude(**{f"{lang_a}": ''})
+            .exclude(**{f"{lang_b}__isnull": True})
+            .exclude(**{f"{lang_b}": ''})
+            .order_by(*[lang_a])
+        ) 
 
-    words_serialized = WordSerializer(words, many=True)
-    preference_serialized = PreferenceSerializer(preference, many=True)
-    return Response({
-        'words': words_serialized.data, 
-        'preferences': preference_serialized.data[0],
-        })
+        words_serialized = WordSerializer(words, many=True)
+        # preference_serialized = PreferenceSerializer(preference, many=True)
+        return Response({'words': words_serialized.data}, status=200)
+    
+    return Response(status=405)
 
 @api_view(['POST'])
 def delete(request):

@@ -12,4 +12,10 @@ export async function load() {
     appState['word_classes'] = word_classes.word_classes
     appState['languages'] = preferences.languages
     appState['modes'] = preferences.modes
+
+    return {
+        preferences: preferences,
+        word_classes: word_classes,
+        user_info: user_info,
+    }
 }

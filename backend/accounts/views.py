@@ -56,6 +56,7 @@ def login(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def refresh_tokens(request):
+    print('BACKEND -> REFRESH TOKENS')
     if request.method == 'POST':
         refresh_token = request.data.get('refresh', None)
         if refresh_token is None:
@@ -63,7 +64,7 @@ def refresh_tokens(request):
         
         serializer = TokenRefreshSerializer(data={"refresh": refresh_token})
         if serializer.is_valid():
-            return Response(serializer.validated_data, status=200)
+            return Response(serializer.validated_data, status=201)
         else:
             return Response(status=401)
     

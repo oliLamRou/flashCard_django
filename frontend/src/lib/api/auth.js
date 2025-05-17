@@ -52,6 +52,8 @@ export async function _login(username, password) {
 }
 
 export async function _refresh() {
+    console.log("FRONTEND -> _REFRESH");
+    
     const url = BASE_URL + 'auth/refresh/'
     const response = await fetch(url, {
         method: 'POST',

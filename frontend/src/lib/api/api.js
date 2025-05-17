@@ -22,7 +22,7 @@ export async function api(endpoint, options = {}) {
 
     if (response.status === 401) {
         response = await _refresh();
-        if (response.status === 200) {
+        if (response.status === 201) {
             authOptions.headers['Authorization'] = `Bearer ${ sessionStorage.getItem(ACCESS_TOKEN_KEY) }`;
             response = await fetch(url, authOptions);
         } else {

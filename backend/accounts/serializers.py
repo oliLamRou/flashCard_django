@@ -9,9 +9,5 @@ class PreferenceSerializer(serializers.ModelSerializer):
             'languageA', 
             'languageB', 
             'learnMode',
-            'learnUserWordsPerc',
-            'learnFavoriteWordsPerc',
-            'learnNewWordsPerc',
-            'learnFailWordsPerc',
-            'learnSuccessWordsPerc',
+            'learnDeck',
         ]

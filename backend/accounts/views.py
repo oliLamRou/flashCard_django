@@ -74,6 +74,7 @@ def refresh_tokens(request):
 def preferences(request):
     if request.method == 'GET':
         modes = {mode[0]: mode[1] for mode in Preference.LEARN_MODE.choices}
+        deck = {mode[0]: mode[1] for mode in Preference.LEARN_DECK.choices}
         languages = {lang[0]: lang[1] for lang in LANGUAGE.choices}
 
         preferences = Preference.objects.filter(user=request.user)
@@ -84,7 +85,8 @@ def preferences(request):
         return Response({
             'preferences': serialized_preferences.data[0],
             'modes': modes,
-            'languages': languages
+            'languages': languages,
+            'deck': deck,
         }, status=200)
     elif request.method == 'POST':
         preferences_instance, _ = Preference.objects.get_or_create(user=request.user)

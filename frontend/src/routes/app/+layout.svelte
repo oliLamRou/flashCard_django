@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
 	import { _remove_user } from "$lib/api/auth";
 	import { api } from "$lib/api/api";

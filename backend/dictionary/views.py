@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 
 from django.db.models import Prefetch
+from django.shortcuts import get_object_or_404
 
 from dictionary.models import Word
 from dictionary.serializers import WordSerializer
@@ -10,7 +11,6 @@ from dictionary.serializers import WordSerializer
 from learn.models import Score
 
 from accounts.models import Preference
-from accounts.serializers import PreferenceSerializer
 
 @api_view(['POST', 'PATCH'])
 def create(request):
@@ -28,6 +28,11 @@ def create(request):
         serialized_word = WordSerializer(data=request.data, partial=True)
         if serialized_word.is_valid():
             serialized_word.save(user=request.user)
+
+            id = serialized_word.data.get('id')
+            word = get_object_or_404(Word, id=id)
+            Score.objects.get_or_create(word=word, user=request.user)
+
             return Response(serialized_word.data, status=201)
         else:
             return Response(serialized_word.errors, status=400)

@@ -6,7 +6,7 @@
     
     let { children } = $props();
 
-    onMount(async() => {
+    onMount(() => {
         goto('/app/learn')
     })
 

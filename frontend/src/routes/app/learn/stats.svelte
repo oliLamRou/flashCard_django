@@ -1,7 +1,6 @@
 <script>
 	import { learnState } from "$lib/state.svelte";
     import CircumIcon from "@klarr-agency/circum-icons-svelte";
-	import { onMount } from "svelte";
 
     const user_score = $derived.by(() => {
         if (!learnState.currentWord || !learnState.currentWord[0]) {
@@ -11,7 +10,9 @@
     })
 
     const accuracy = $derived.by(() => {
-        if (user_score.success < 1 || user_score.fail < 1) return '--'
+        if (user_score.success == 0 && user_score.fail == 0) return '--'
+        if (user_score.fail == 0 && user_score.success > 0) return 100
+        if (user_score.success == 0 && user_score.fail > 0) return 0
 
         let accuracy = user_score.success / (user_score.success + user_score.fail)
         accuracy = accuracy * 100
@@ -29,7 +30,7 @@
         targetDate.setHours(0, 0, 0, 0);
         today.setHours(0, 0, 0, 0);
 
-        const diffInMs = targetDate - today;
+        const diffInMs = today - targetDate;
         const diffInDays = Math.round(diffInMs / (1000 * 60 * 60 * 24));        
         if (diffInDays === 0){
             return 'Today'
@@ -38,11 +39,6 @@
         } else {
             return diffInDays + ' days ago'
         }
-    })
-
-    onMount(() => {
-        const currentWord = learnState.currentWord[0]
-        console.log($state.snapshot(currentWord.user_score));
     })
 </script>
 

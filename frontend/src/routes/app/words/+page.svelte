@@ -1,5 +1,4 @@
 <script>
-    import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
     import { api } from "$lib/api/api";
 	import { appState, userState } from "$lib/state.svelte";

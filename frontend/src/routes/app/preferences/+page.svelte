@@ -2,7 +2,6 @@
 	import { goto } from "$app/navigation";
 	import { save_prefererences } from "$lib/api/preferences.js";
 	import { appState, userState } from "$lib/state.svelte.js";
-	import { onMount } from "svelte";
 
     let languages = $state(appState.languages)
     let modes = $state(appState.modes)

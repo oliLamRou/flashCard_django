@@ -3,6 +3,7 @@
 	import { appState, userState } from "$lib/state.svelte";
 	import { create } from "$lib/api/word.js";
 	import { fade } from "svelte/transition";
+	import { update_word } from "$lib/api/learn.js";
 
     let showToast = $state(false);
 
@@ -23,12 +24,14 @@
 
     const save = async() => {
         const response = await create(word)
-        
-        if (response.ok) {
-            triggerToast()
-            word.word_languageA = null
-            word.word_languageB = null
-            word.word_class = undef
+        if (response.ok) {            
+            if (word.word_id) {
+                goto('/app/words')
+            } else {
+                triggerToast()
+                word.word_languageA = null
+                word.word_languageB = null
+            }
         }
     }
 
@@ -36,14 +39,14 @@
 <div class="min-h-screen flex items-center justify-center">
     <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
     <form onsubmit={save}>
-        <legend class="fieldset-legend">{word.word_languageA ? 'Edit Word' : 'New Word'}</legend>
+        <legend class="fieldset-legend">{word.word_id ? 'Edit Word' : 'New Word'}</legend>
     
         <label for='id' class="label">{languages[languageA]}</label>
-        <input bind:value={word.word_languageA} type="text" class="input validator" required minlength="2"/>
+        <input bind:value={word.word_languageA} type="text" class="input validator" required minlength="1"/>
         <p class="validator-hint">Must be 2 characters at least</p>
 
         <label for='id' class="label">{languages[languageB]}</label>
-        <input bind:value={word.word_languageB} type="text" class="input validator" required minlength="2"/>
+        <input bind:value={word.word_languageB} type="text" class="input validator" required minlength="1"/>
         <p class="validator-hint">Must be 2 characters at least</p>
 
         <label for='id' class="label">Word Class</label>

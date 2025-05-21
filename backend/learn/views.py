@@ -1,87 +1,79 @@
 import random
-import math
+import secrets
+from datetime import timedelta
 
-from django.db.models import Q, F, Prefetch
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.db.models import Q, F, Prefetch, ExpressionWrapper, IntegerField, DurationField
+from django.db.models.functions import Now
 
 from rest_framework.decorators import api_view
 from rest_framework.views import Response
 
 from dictionary.models import Word
 from dictionary.serializers import WordSerializer
-from accounts.models import Preference
-from learn.models import Score
-from learn.serializers import ScoreSerializer
+from dictionary.models import Word
 
-def get_some_querySet(querySet, perc=1):
-    queryList = list(querySet)
-    queryListLen = len(queryList)
-    random.shuffle(queryList)
-    amount = math.ceil(queryListLen * perc)
-    return queryList[:amount]
+from learn.models import Score
+from accounts.models import Preference
+
 
 @api_view(['GET'])
 def guess(request):
     if request.method == 'GET':
-        preference = Preference.objects.filter(user=request.user).first()
-        lang_from = preference.languageA if preference.learnMode == 'NORMAL' else preference.languageB
-        lang_to = preference.languageB if preference.learnMode == 'NORMAL' else preference.languageA
+        user = request.user
+        preference = Preference.objects.filter(user=user).first()
 
-        newPerc = preference.learnNewWordsPerc
-        userPerc = preference.learnUserWordsPerc
-        favPerc = preference.learnFavoriteWordsPerc
-        failPerc = preference.learnFailWordsPerc
-        succPerc = preference.learnSuccessWordsPerc
-
-        qs = Word.objects.prefetch_related(
-           Prefetch(
-                'scores',
-                queryset=Score.objects.filter(user=request.user),
-                to_attr='user_scores'
+        #Score Prefetch
+        prefetch_score = Prefetch(
+            'scores',
+            queryset=Score.objects.filter(user=user, archive=False),
+            to_attr='user_scores'
             )
-        ).all() #Start Query
+        qs = Word.objects.prefetch_related(prefetch_score)
+
+        #Valid values in language
+        exclude_languages = (
+            Q(**{f"{preference.languageA}__isnull": True}) | 
+            Q(**{f"{preference.languageA}": ''}) |
+            Q(**{f"{preference.languageB}__isnull": True}) | 
+            Q(**{f"{preference.languageB}": ''})
+        )
+        qs = qs.exclude(exclude_languages)
 
         #Archive
-        qs = qs.exclude(scores__archive=True)
+        qs = qs.filter(scores__archive=False)
 
-        #Get only user language
-        qs = qs.exclude(Q(**{f"{lang_from}__isnull": True}) | Q(**{f"{lang_from}": ''}))
-        qs = qs.exclude(Q(**{f"{lang_to}__isnull": True}) | Q(**{f"{lang_to}": ''}))
+        #User Choice
+        if preference.learnDeck == 'FAVORITE':
+            #FIX HERE WHEN FAV EXISTS
+            pass
+        elif preference.learnDeck == 'USER':
+            qs = qs.filter(user=user)
 
-        if (userPerc < 1):
-            qs = qs.filter(user=request.user)
-
-        qs_noScore = qs.filter(scores__isnull=True) #get no score
-        noScore_list = get_some_querySet(qs_noScore, newPerc)
-
-        qs_withScore = qs.filter(scores__isnull=False) #get with score
-        words_good = qs_withScore.filter(scores__success__gt=F('scores__fail')) #with score + more fail
-        words_bad = qs_withScore.filter(scores__success__lte=F('scores__fail')) #with score + more success
-
-        success_list = get_some_querySet(words_good, succPerc)
-        fail_list = get_some_querySet(words_bad, failPerc)
-
-        #Combien and shuffle
-        word_list = noScore_list + success_list + fail_list
-        random.shuffle(word_list)
-        
-        if not word_list:
-            return Response({"error": "No Words"}, status=400)
-        
-        rdn_word = word_list[-1]
-
-        #Get all the match in an array
-        words = qs.filter(
-            Q(
-                **{
-                    f'{lang_from}': getattr(rdn_word, lang_from)
-                }
-            )
+        #Score or Date
+        delay_days_expression = ExpressionWrapper((F("scores__score") - 2) * 7, output_field=IntegerField())
+        days_since_last_try_expression = ExpressionWrapper(Now() - F("scores__last_try"), output_field=DurationField())
+        qs = qs.annotate(
+            delay_days=delay_days_expression,
+            days_since_last_try=days_since_last_try_expression
         )
+        
+        delay_days_result = Q(delay_days__lt=1) | Q(days_since_last_try__gte=F("delay_days") * timedelta(days=1))
+        qs = qs.filter(delay_days_result)#Aka score < 3 or waiting >= delay
+
+        #Random and select
+        queryList = list(qs)
+        i = secrets.randbelow(len(queryList))
+        random.shuffle(queryList)
+        rnd_word = queryList[i]
+
+        #Get all match
+        lang_from = preference.languageA if preference.learnMode == 'NORMAL' else preference.languageB
+        filter_lang_from = Q(**{f'{lang_from}': getattr(rnd_word, lang_from)})
+        words = qs.filter(filter_lang_from)
 
         serialized_words = WordSerializer(words, many=True)
-        return Response({"words": serialized_words.data}, status=200)
+        return Response({"words": serialized_words.data}, status=200)        
     
     return Response(status=405)
 
@@ -100,8 +92,10 @@ def score(request):
         
         if data.get('score') == -1:
             score_entry.fail += 1
+            score_entry.score = 0
         elif data.get('score') == 1:
             score_entry.success += 1
+            score_entry.score += 1
 
         score_entry.save()
 
@@ -129,6 +123,7 @@ def archive(request):
         else:
             return Response(status=400)
             
+        score_entry.score = 0
         score_entry.save()
         return Response(status=200)   
     

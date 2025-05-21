@@ -23,12 +23,12 @@
 
     const save = async() => {
         const response = await create(word)
+        
         if (response.ok) {
             triggerToast()
             word.word_languageA = null
             word.word_languageB = null
-            word.description = null
-            word.word_class = word_classes.undef
+            word.word_class = undef
         }
     }
 
@@ -52,9 +52,6 @@
                 <option value={k}>{v}</option>
             {/each}
         </select>
-
-        <!-- <label for='id' class="label">Description</label>
-        <input bind:value={word.description} type="text" class="input"/> -->
 
         <div class="divider"></div>
         

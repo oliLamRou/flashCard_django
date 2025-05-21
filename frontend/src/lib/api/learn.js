@@ -1,16 +1,16 @@
 import { api } from "$lib/api/api"
-import { currentWords } from "$lib/state.svelte"
+import { learnState } from "$lib/state.svelte"
 
 export async function load_word() {
     const response = await api('learn/guess/', {
         method: 'GET'
     })
 
-    currentWords.length = 0
+    learnState.currentWord.length = 0
     
     if (response.status === 200) {
         const data = await response.json()
-        currentWords.push(...data.words);
+        learnState.currentWord.push(...data.words);
     }
 
     return response

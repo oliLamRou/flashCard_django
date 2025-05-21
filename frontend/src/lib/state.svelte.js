@@ -5,4 +5,7 @@ export const userState = $state({});
 export const appState = $state({});
 
 //Current Flashcard
-export const currentWords = $state([]);
+export const learnState = $state({
+    currentWord: [],
+    showAnswer: false
+});

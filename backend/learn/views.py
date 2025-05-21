@@ -70,7 +70,7 @@ def guess(request):
         #Get all match
         lang_from = preference.languageA if preference.learnMode == 'NORMAL' else preference.languageB
         filter_lang_from = Q(**{f'{lang_from}': getattr(rnd_word, lang_from)})
-        words = qs.filter(filter_lang_from)
+        words = qs.filter(filter_lang_from).distinct('id')
 
         serialized_words = WordSerializer(words, many=True)
         return Response({"words": serialized_words.data}, status=200)        

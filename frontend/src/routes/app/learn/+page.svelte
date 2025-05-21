@@ -5,6 +5,12 @@
     
 </script>
 
-<!-- <Stats/> -->
 <Flashcard/>
-<Options/>
+<div class="flex">
+    <div class="grow">
+        <Options/>
+    </div>
+    <div class="grow">
+        <Stats/>
+    </div>
+</div>

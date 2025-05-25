@@ -80,7 +80,7 @@ def read(request):
             Prefetch(
                     'scores',
                     queryset=Score.objects.filter(user=request.user),
-                    to_attr='user_scores'
+                    to_attr='user_score'
                 )
             )
             .exclude(**{f"{lang_a}__isnull": True})

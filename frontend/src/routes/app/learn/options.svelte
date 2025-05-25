@@ -28,16 +28,18 @@
         load_word()
     }
 
-    $effect(async() => {
+    const update = async() => {
         const data = {
             learnDeck: userChoice
         }
-        save_prefererences(data)
-        const response = await load_word()
-        if (response.ok) {
-            learnState.showAnswer = false
-        }
-    })
+        const saved = await save_prefererences(data)
+        if (!saved) return
+        
+        const loaded = await load_word()
+        if (!loaded) return
+        
+        learnState.showAnswer = false
+    }
 
 </script>
 
@@ -51,7 +53,7 @@
         <p>Flashcard:</p>
         {#each Object.entries(appState.deck) as [k, v]}
             <label class="label" id="userWords"> 
-                <input type="radio" name="userChoice" value={k} class="radio radio-sm" bind:group={userChoice} />
+                <input onchange={update} type="radio" name="userChoice" value={k} class="radio radio-sm" bind:group={userChoice} />
                 {v}
             </label>            
         {/each}

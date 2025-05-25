@@ -14,7 +14,7 @@
         if (res_register.status !== 201) { return }
 
         const response = await _login(username, password)        
-        if (response.ok) {
+        if (response) {
             goto('/app/learn')
         }
     }

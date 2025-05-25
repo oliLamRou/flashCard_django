@@ -3,13 +3,22 @@
 	import { api } from "$lib/api/api";
 	import { _login, _refresh } from "$lib/api/auth";
 	import { userState } from "$lib/state.svelte";
+	import { onMount } from "svelte";
+    
     let username = $state('')
     let password = $state('')
     let authType = $state(true)
 
-    const login = async() => {        
-        const response = await _login(username, password)        
-        if (response.ok) {
+    onMount(() => {
+        if (localStorage.getItem('REFRESH_TOKEN_KEY')) {
+            console.info("User Return, Trying redirect to /learn")
+            goto('/app/learn')
+        }
+    })
+
+    const login = async() => {
+        const response = await _login(username, password)
+        if (response) {
             goto('/app/learn')
         }
     }
@@ -17,6 +26,7 @@
     const signUp = () => {
         goto('/auth/register')
     }
+    
 </script>
 
 <div class="min-h-screen flex items-center justify-center">

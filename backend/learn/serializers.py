@@ -6,7 +6,8 @@ class ScoreSerializer(serializers.ModelSerializer):
         model = Score
         fields = [
             'fail', 
-            'success', 
+            'success',
+            'score', 
             'last_try', 
             'archive'
         ]

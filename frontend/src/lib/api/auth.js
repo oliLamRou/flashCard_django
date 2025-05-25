@@ -1,5 +1,5 @@
-import { userState } from "$lib/state.svelte";
-import { ACCESS_TOKEN_KEY, BASE_URL, REFRESH_TOKEN_KEY } from "$lib/constant";
+import { appState, learnState, userState } from "$lib/state.svelte";
+import { ACCESS_TOKEN_KEY, APP_STATE, BASE_URL, LEARN_STATE, REFRESH_TOKEN_KEY, USER_STATE } from "$lib/constant";
 
 async function save_access_token(data) {
     sessionStorage.setItem(ACCESS_TOKEN_KEY, data.access)
@@ -7,9 +7,12 @@ async function save_access_token(data) {
 }
 
 export function _remove_user() {
+    console.info("Clearing Session, Local, State Data")
     sessionStorage.removeItem(ACCESS_TOKEN_KEY)
     localStorage.removeItem(REFRESH_TOKEN_KEY)
-    Object.assign(userState, {})
+    Object.assign(userState, USER_STATE)
+    Object.assign(appState, APP_STATE)
+    Object.assign(learnState, LEARN_STATE)
 }
 
 export async function _register(username, password) {
@@ -40,14 +43,14 @@ export async function _login(username, password) {
         body: JSON.stringify(credentials)
     })
 
-    if (response.ok) {
+    if (response.status === 200) {
         const data = await response.json();
         save_access_token(data)
-        console.log("Logged in successfully!");
-        return response
+        console.info("Logged in successfully!");
+        return true
     } else {
         console.error("Login failed:");
-        return response
+        return false
     }
 }
 

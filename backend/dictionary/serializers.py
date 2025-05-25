@@ -11,7 +11,7 @@ class WordSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_user_score(self, obj):
-        score = getattr(obj, 'user_scores', [])
+        score = getattr(obj, 'user_score', [])
         if score:
             return {
                 'fail': score[0].fail,

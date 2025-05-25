@@ -11,10 +11,11 @@ export async function save_prefererences(data) {
         },
     })
 
-    if (response.ok) {
+    if (response.status === 201) {
         const data = await load_preferences()
         userState['preferences'] = data.preferences
+        return true
     }
 
-    return response
+    return false
 }

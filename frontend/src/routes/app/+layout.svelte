@@ -8,8 +8,8 @@
     let { children } = $props();
 
     const logout = async() => {
+        goto('/auth/credentials')
         _remove_user()
-        goto('auth/credentials')
     }
 
 </script>

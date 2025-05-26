@@ -1,39 +1,39 @@
-# ToDo
-- Setup switch to use local or render db
-- setup superuser in both
-- sign up and sign in page
-- how to check if log in?
-- redirect if not log in ?
+# Allez 가자!
 
-- DB word
-    - ~CRUD words in 2 language~
+### Goal
+Gain full-stack development skills while creating a tool to help myself learn Korean. While this app is currently a simple flashcard app, it gives me a lot of ideas and insights into building and deploying a real-world web app.
 
-- DB score
-    - ~foreign key from word~
-    - ~add score bad or success~
+### Main Technology
+-> Backend: Python, Django, PostgreSQL  
+-> Frontend: HTML, JS, Svelte, SvelteKit  
+-> Deployment: Vercel, Render, Shell, YAML
 
-- UX
-    - ~home, words, learn~
-    - ~learn auto random new word after score~
+You can, at your own risk, create an account and try the app [here](https://flash-card-django.vercel.app/auth/register).
 
- - features
-    - ~list answer of all possibility~
-        - having good for specific option ?
-        - word type is important and could remove some confusion: ADV, noun, verb particule ...
-    - personal note ?
-    - word list with stats and can see group by
-        group by new old, good bad, type...
-    - word to speak ?
-    - save good bad word from current session. repeat till all good ?
-        - maybe better to get 20 and clear the stack ?
+## Phase 1
+- Backend
+    - ~~Base DB structure~~
+    - ~~CRUD endpoints~~
+    - ~~Auth~~
+    - ~~Learn algorithm v1~~
 
+- Frontend
+    - ~~Mobile-only oriented UX~~
+    - ~~Sign up / Sign in / Logout~~
+    - ~~CRUD~~
+    - ~~Fun, simple learning UX~~
 
-# phase 2
-- svelte frontend
-- hosting
-- user and auth
-- heroku?
+- Cloud Deployment
+    - ~~Render (backend)~~
+    - ~~Vercel (frontend)~~
 
-### Card info
-- francais, korean, type, note
-    - need some info for particule, adverbe sometime
+### Phase 2
+- Learn Page
+    - Learn algorithm v2
+    - Social features
+        - Shared word lists
+        - See your friends' stats
+
+- Stats
+    - Dashboard pages showing your learning progress
+    - Recap email at the end of the week

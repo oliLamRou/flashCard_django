@@ -5,6 +5,7 @@
 	import { load_words, remove_word } from "$lib/api/words";
     import CircumIcon from "@klarr-agency/circum-icons-svelte";
 	import { archive_word } from "$lib/api/learn";
+	import { days_since } from "$lib/utils";
 
     const { data } = $props()
     let words = $state(data.words)
@@ -76,38 +77,48 @@
             words = data.words
         }
     }
+
+    const sortBy = (ok) => {
+        console.log(ok);
+    }
 </script>
 
 <div class="flex m-3">
-    <button onclick={create} class="btn btn-sm btn-primary mr-2">New</button>
-    <button onclick={batch_import} disabled class="btn btn-sm btn-primary">Import</button>
-    <label class="label mx-2">
-    <input type="text" placeholder="Search" class="input input-sm grow" bind:value={searchValue}/>
-    <input type="checkbox" class="toggle toggle-sm" bind:checked={userWords}/>
+    <button onclick={create} class="btn btn-sm btn-primary mr-2">Add Words</button>
+    <!-- <button onclick={batch_import} disabled class="btn btn-sm btn-primary">Import</button> -->
+    <!-- <label class="label mx-2"> -->
+    <!-- <input type="text" placeholder="Search" class="input input-sm grow" bind:value={searchValue}/> -->
+    <!-- <input type="checkbox" class="toggle toggle-sm" bind:checked={userWords}/>
         Your Words
-    </label>
+    </label> -->
 </div>
 
-<div class="overflow-x-auto">
+<div class="overflow-x-auto rounded-box">
     <table class="table table-zebra table-sm">
         <thead>            
-            <tr class="text-xs bg-base-300">
-                <th>Translation</th>
-                <th class="min-w-3">Word Class</th>
-                <th class="min-w-1 text-right">Score</th>
+            <tr class="text-sm bg-base-300">
+                <th>{languageA}</th>
+                <th>{languageB}</th>
+                <th>Word Class</th>
+                <th>Created</th>
+                <!-- <th>By</th> -->
+                <th class="text-right">Last Attempt</th>
+                <th class="text-right">Attempts</th>
+                <th class="text-right">Streak</th>
                 <th>Options</th>
             </tr>
         </thead>
         <tbody>
             {#each filtered_words as word}
                 <tr>
-                    <td>
-                        {languageA}: { word[languageA] }
-                        <br/>
-                        {languageB}: { word[languageB] }
-                    </td>                    
-                    <td>{word_classes[word.word_class]}</td>
-                    <td class="text-right">{get_score(word)}</td>
+                    <td>{ word[languageA] }</td>
+                    <td>{ word[languageB] }</td>
+                    <td>{ word_classes[word.word_class]}</td>
+                    <td>{ word.create_at}</td>
+                    <!-- <td>{ word.user}</td> -->
+                    <td class="text-right">{ days_since(word.user_score.last_try)}</td>
+                    <td class="text-right">{ word.user_score.fail}</td>
+                    <td class="text-right">{word.user_score.score}</td>
                     <td>
                         <!-- <button 
                             onclick={() => bookmarked = !bookmarked}

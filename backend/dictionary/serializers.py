@@ -1,8 +1,6 @@
 from dictionary.models import Word
 from rest_framework import serializers
 
-from learn.serializers import ScoreSerializer
-
 class WordSerializer(serializers.ModelSerializer):
     user_score = serializers.SerializerMethodField()
 
@@ -21,3 +19,4 @@ class WordSerializer(serializers.ModelSerializer):
                 'archive': score[0].archive,
             }
         return None
+    

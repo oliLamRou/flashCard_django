@@ -19,6 +19,7 @@
     }
 
     const archive = async() => {
+        learnState.showAnswer = false
         const word = learnState.currentWord[0]
         const response = await archive_word(word)
 

@@ -70,9 +70,7 @@ def get_word_classes(request):
 @api_view(['GET'])
 def read(request):
     if request.method == 'GET':
-        preference = Preference.objects.filter(user=request.user)
-        lang_a = preference.first().languageA
-        lang_b = preference.first().languageB
+        preference = Preference.objects.filter(user=request.user).first()
 
         words = (
             Word.objects
@@ -83,15 +81,14 @@ def read(request):
                     to_attr='user_score'
                 )
             )
-            .exclude(**{f"{lang_a}__isnull": True})
-            .exclude(**{f"{lang_a}": ''})
-            .exclude(**{f"{lang_b}__isnull": True})
-            .exclude(**{f"{lang_b}": ''})
-            .order_by(*[lang_a])
+            .exclude(**{f"{preference.languageA}__isnull": True})
+            .exclude(**{f"{preference.languageA}": ''})
+            .exclude(**{f"{preference.languageB}__isnull": True})
+            .exclude(**{f"{preference.languageB}": ''})
+            .order_by(*[preference.languageA])
         ) 
 
         words_serialized = WordSerializer(words, many=True)
-        # preference_serialized = PreferenceSerializer(preference, many=True)
         return Response({'words': words_serialized.data}, status=200)
     
     return Response(status=405)

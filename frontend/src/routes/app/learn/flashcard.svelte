@@ -28,10 +28,11 @@
 
     //Functions
     const answer = async(score) => {
-        update_word(word, score)
-        const response = await load_word()
+        const response = await update_word(word, score)
         if (response.ok) {
-            learnState.showAnswer = false
+            if (await load_word()) {
+                learnState.showAnswer = false
+            }
         }
     }
 

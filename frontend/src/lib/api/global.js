@@ -13,6 +13,7 @@ export async function load_word_classes() {
 }
 
 export async function load_preferences() {
+    console.log("LOAD_PREFERENCES");
     const response = await api('auth/preference/', {})
 
     if (response.ok) {

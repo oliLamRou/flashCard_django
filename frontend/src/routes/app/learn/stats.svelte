@@ -42,13 +42,17 @@
     })
 </script>
 
-{#if user_score}
+
 <div class="stats grow">
     <div class="stat">
+        {#if user_score}
         <div class="stat-title">Accuracy</div>
         <div class="stat-value">{accuracy}%</div>
         <div class="stat-desc">Correct Streak: {user_score.score}</div>
         <div class="stat-desc">Last seen: {last_seen}</div>
+        {:else}
+        <div class="stat-title">No Stats for Yet!</div>
+        {/if}
     </div>
-</div>    
-{/if}
+</div>
+

@@ -45,10 +45,11 @@ def login(request):
         user = authenticate(username=username, password=password)
 
         if user is not None:
-            refresh = RefreshToken.for_user(user)
+            credentials = RefreshToken.for_user(user)
+            print(f"New login for user: {user}\n")
             return Response({
-                "access": str(refresh.access_token),
-                "refresh": str(refresh)
+                "access": str(credentials.access_token),
+                "refresh": str(credentials)
             }, status=200)
 
         return Response({"error": "Invalid credentials"}, status=401)    
@@ -56,7 +57,6 @@ def login(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def refresh_tokens(request):
-    print('BACKEND -> REFRESH TOKENS')
     if request.method == 'POST':
         refresh_token = request.data.get('refresh', None)
         if refresh_token is None:
@@ -64,6 +64,7 @@ def refresh_tokens(request):
         
         serializer = TokenRefreshSerializer(data={"refresh": refresh_token})
         if serializer.is_valid():
+            print(f"Refresh login for user: {request.user}\n")
             return Response(serializer.validated_data, status=201)
         else:
             return Response(status=401)
@@ -94,10 +95,11 @@ def preferences(request):
         
         if serialized_preferences.is_valid():
             serialized_preferences.save()
-            return Response(200)
-        
+            return Response(status=201)
         else:
-            return Response(500)
+            return Response(status=400)
+        
+    Response(status=405)
 
 @api_view(['GET'])
 # date_joined, email, first_name, groups, id, is_active, is_staff, is_superuser, last_login, last_name, logentry, password, preferences, scores, user_permissions, username, words

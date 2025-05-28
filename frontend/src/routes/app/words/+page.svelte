@@ -75,7 +75,7 @@
             <tr class="text-sm bg-base-300">
                 <th>{userState.preferences.languageA}</th>
                 <th>{userState.preferences.languageB}</th>
-                <th>Word Class</th>
+                <!-- <th>Word Class</th> -->
                 <th>Created</th>
                 <!-- <th>By</th> -->
                 <th class="text-right">Last Attempt</th>
@@ -89,7 +89,7 @@
                 <tr>
                     <td>{ word[userState.preferences.languageA] }</td>
                     <td>{ word[userState.preferences.languageB] }</td>
-                    <td>{ appState.word_classes[word.word_class]}</td>
+                    <!-- <td>{ appState.word_classes[word.word_class]}</td> -->
                     <td>{ word.create_at}</td>
                     <!-- <td>{ word.user}</td> -->
                     <td class="text-right">{days_since(word.user_score)}</td>
@@ -121,7 +121,7 @@
     <div class="mt-2 flex justify-center">
         <div class="join">
             {#each { length: page_amount }, page}
-                <button onclick={() => get_new_page(page)} class="join-item btn">{page + 1}</button>
+                <button onclick={() => get_new_page(page)} class="join-item btn btn-xs">{page + 1}</button>
             {/each}
         </div>
     </div>

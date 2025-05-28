@@ -98,7 +98,7 @@ def read(request):
         qs = qs.order_by(*[preference.languageA])
         
         current_page = int(request.query_params.get('page', 0))
-        row_per_page = 10
+        row_per_page = 15
         page_amount = math.ceil(qs.count() / row_per_page)
 
         first_elem = current_page * row_per_page

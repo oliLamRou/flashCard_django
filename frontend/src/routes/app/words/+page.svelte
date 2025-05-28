@@ -6,17 +6,33 @@
 	import { archive_word } from "$lib/api/learn";
 	import { days_since } from "$lib/utils";
 	import { load } from "../+layout.js";
+	import { page } from "$app/state";
 
     const { data } = $props()
-    let words = $state(data.words)
-    let page_amount = $state(data.page_amount)
-    let current_page = $state(data.current_page)
-    let allWords = $state(false)
 
-    const reload_words = (data) => {
-        words = data.words
-        page_amount = data.page_amount
-        current_page = data.current_page
+    let words = $state(data.words)
+    const languageA_value = appState.languages[userState.preferences.languageA]
+    const languageB_value = appState.languages[userState.preferences.languageB]
+    
+    let filters = $state({
+        page_amount: data.page_amount,
+        everyoneWords: false,
+        current_page: data.current_page,
+        search: '',
+        page: 0
+    })
+
+    const get_filtered_words = async(event) => {
+        const attr = event.currentTarget.dataset
+        if (attr.action == 'clearSearch') {filters.search = ''}
+        filters.page = attr.page ? attr.page : 0
+
+        const data = await load_words(filters)
+        if (data) { 
+            words = data.words
+            filters.current_page = data.current_page
+            filters.page_amount = data.page_amount
+        }
     }
 
     const create = (id) => {
@@ -44,16 +60,6 @@
         }
     }
 
-    const get_user_words = async() => {
-        const data = await load_words(current_page, allWords)
-        if (data) { reload_words(data) }
-    }
-
-    const get_new_page = async(page) => {
-        const data = await load_words(page, allWords)
-        if (data) { reload_words(data) }
-    }
-
     const get_attemps = (word) => {
         const fail = word.user_score?.fail || 0
         const success = word.user_score?.success || 0
@@ -61,10 +67,15 @@
     }
 </script>
 
-<div class="flex m-3">
-    <button onclick={create} class="btn btn-sm btn-primary mr-2">Add Words</button>
-    <label>
-        <input onchange={get_user_words} class="toggle" type="checkbox" bind:checked={allWords}/>
+<div class="flex gap-x-2 m-2">
+    <button onclick={create} class="btn btn-sm btn-primary">Add Words</button>
+    <div class="join">
+        <input class="input input-sm" type="text" placeholder="Search in {languageA_value} and {languageB_value}" bind:value={filters.search}/>
+        <button onclick={get_filtered_words} class="btn btn-sm btn-secondary join-item" disabled={!filters.search}>Search</button>
+        <button onclick={get_filtered_words} data-action='clearSearch' class="btn btn-sm btn-neutral join-item" disabled={!filters.search}>clear</button>
+    </div>
+    <label class="text-sm">
+        <input onchange={get_filtered_words} class="toggle toggle-sm" type="checkbox" bind:checked={filters.everyoneWords}/>
         Everyones words
     </label>
 </div>
@@ -73,8 +84,8 @@
     <table class="table table-zebra table-sm">
         <thead>            
             <tr class="text-sm bg-base-300">
-                <th>{userState.preferences.languageA}</th>
-                <th>{userState.preferences.languageB}</th>
+                <th>{languageA_value}</th>
+                <th>{languageB_value}</th>
                 <!-- <th>Word Class</th> -->
                 <th>Created</th>
                 <!-- <th>By</th> -->
@@ -120,8 +131,8 @@
     </table>
     <div class="mt-2 flex justify-center">
         <div class="join">
-            {#each { length: page_amount }, page}
-                <button onclick={() => get_new_page(page)} class="join-item btn btn-xs">{page + 1}</button>
+            {#each { length: filters.page_amount }, page}
+                <button onclick={get_filtered_words} data-page={page} class="join-item btn btn-xs">{page + 1}</button>
             {/each}
         </div>
     </div>

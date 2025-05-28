@@ -21,33 +21,31 @@
     
     let { data } = $props()
     let word = $state(data)
+    let formEl
 
     const save = async() => {
         const response = await create(word)
-        if (response.ok) {            
-            if (word.word_id) {
-                goto('/app/words')
-            } else {
-                triggerToast()
-                word.word_languageA = null
-                word.word_languageB = null
-            }
+        if (response && word.word_id) {
+            goto('/app/words')
         }
+        
+        triggerToast()
+        formEl.reset()
     }
 
 </script>
 <div class="min-h-screen flex items-center justify-center">
     <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-    <form onsubmit={save}>
+    <form onsubmit={save} bind:this={formEl}>
         <legend class="fieldset-legend">{word.word_id ? 'Edit Word' : 'New Word'}</legend>
     
         <label for='id' class="label">{languages[languageA]}</label>
         <input bind:value={word.word_languageA} type="text" class="input validator" required minlength="1"/>
-        <p class="validator-hint">Must be 2 characters at least</p>
+        <p class="validator-hint">Minimum 1 character</p>
 
         <label for='id' class="label">{languages[languageB]}</label>
         <input bind:value={word.word_languageB} type="text" class="input validator" required minlength="1"/>
-        <p class="validator-hint">Must be 2 characters at least</p>
+        <p class="validator-hint">Minimum 1 character</p>
 
         <label for='id' class="label">Word Class</label>
         <select class='select' bind:value={word.word_class}>

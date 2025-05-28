@@ -42,11 +42,7 @@
 {#if learnState.currentWord.length > 0}
 <div class="card card-border m-2">
     <div class="card-body">
-        <p class="card-title">{learnDeck}</p>
-        <!-- <div class="flex justify-between font-thin mt-2">
-            <div>{word_classes[word.word_class]}</div>
-             <div>{last_try}</div>
-        </div> -->
+        <p class="card-title">Flashcards: {learnDeck}</p>
         <div class="card bg-base-200">
             <div class="card-body text-center card-title">
                 <p class="font-sans text-4xl capitalize">{word[lang_from]}</p>
@@ -58,11 +54,6 @@
                 {/each}
             </div>
         </div>
-        <!-- <div class="flex justify-end">
-            <div class="badge badge-soft font-medium badge-info">
-                Score: {score_count}
-            </div>
-        </div> -->
         <div class="flex gap-x-2">
             {#if learnState.showAnswer}
             <button onclick={() => answer(-1)} class="btn btn-lg btn-error grow">Incorrect</button>

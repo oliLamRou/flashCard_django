@@ -1,5 +1,6 @@
 <script>
 	import { learnState } from "$lib/state.svelte";
+	import { days_since } from "$lib/utils";
     import CircumIcon from "@klarr-agency/circum-icons-svelte";
 
     const user_score = $derived.by(() => {
@@ -19,27 +20,6 @@
         accuracy = Math.round(accuracy)
         return accuracy
     })
-
-    const last_seen = $derived.by(() => {
-        if (!user_score.last_try) {return '--'}
-
-        const targetDate = new Date(user_score.last_try);
-        const today = new Date();
-
-        // Clear time portion to make the difference in full days
-        targetDate.setHours(0, 0, 0, 0);
-        today.setHours(0, 0, 0, 0);
-
-        const diffInMs = today - targetDate;
-        const diffInDays = Math.round(diffInMs / (1000 * 60 * 60 * 24));        
-        if (diffInDays === 0){
-            return 'Today'
-        } else if (diffInDays === 1) {
-            return 'Yesterday'
-        } else {
-            return diffInDays + ' days ago'
-        }
-    })
 </script>
 
 
@@ -49,7 +29,7 @@
         <div class="stat-title">Accuracy</div>
         <div class="stat-value">{accuracy}%</div>
         <div class="stat-desc">Correct Streak: {user_score.score}</div>
-        <div class="stat-desc">Last seen: {last_seen}</div>
+        <div class="stat-desc">Last Attempt: {days_since(user_score.last_try)}</div>
         {:else}
         <div class="stat-title">No Stats for Yet!</div>
         {/if}

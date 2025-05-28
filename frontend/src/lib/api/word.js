@@ -22,5 +22,9 @@ export async function create(word) {
         },
     })
 
-    return response
+    if (response.status === 201) {
+        return true
+    } else {
+        return false
+    }
 }

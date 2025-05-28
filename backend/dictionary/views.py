@@ -1,8 +1,9 @@
+import math
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.shortcuts import get_object_or_404
 
 from dictionary.models import Word
@@ -72,24 +73,45 @@ def read(request):
     if request.method == 'GET':
         preference = Preference.objects.filter(user=request.user).first()
 
-        words = (
-            Word.objects
-            .prefetch_related(
+        qs = Word.objects.prefetch_related(
             Prefetch(
-                    'scores',
-                    queryset=Score.objects.filter(user=request.user),
-                    to_attr='user_score'
-                )
+                'scores',
+                queryset=Score.objects.filter(user=request.user),
+                to_attr='user_score'
             )
-            .exclude(**{f"{preference.languageA}__isnull": True})
-            .exclude(**{f"{preference.languageA}": ''})
-            .exclude(**{f"{preference.languageB}__isnull": True})
-            .exclude(**{f"{preference.languageB}": ''})
-            .order_by(*[preference.languageA])
-        ) 
+        )
 
-        words_serialized = WordSerializer(words, many=True)
-        return Response({'words': words_serialized.data}, status=200)
+        exclude_languages = (
+            Q(**{f"{preference.languageA}__isnull": True}) | 
+            Q(**{f"{preference.languageA}": ''}) |
+            Q(**{f"{preference.languageB}__isnull": True}) | 
+            Q(**{f"{preference.languageB}": ''})
+        )
+        qs = qs.exclude(exclude_languages)
+
+        #filter user
+        if request.query_params.get('all') == 'false':
+            qs = qs.filter(user=request.user)
+
+        #Search by
+        #Order by
+        qs = qs.order_by(*[preference.languageA])
+        
+        current_page = int(request.query_params.get('page', 0))
+        row_per_page = 10
+        page_amount = math.ceil(qs.count() / row_per_page)
+
+        first_elem = current_page * row_per_page
+        last_elem = first_elem + row_per_page
+
+        words_serialized = WordSerializer(qs[first_elem:last_elem], many=True)
+        data = {
+            'words': words_serialized.data, 
+            'page_amount': page_amount, 
+            'current_page': current_page    
+        }
+        
+        return Response(data, status=200)
     
     return Response(status=405)
 

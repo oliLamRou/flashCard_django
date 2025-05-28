@@ -18,8 +18,8 @@
         }
 
         const response = await save_prefererences(data)
-        if (response.ok) {
-            goto('/app/words')
+        if (response) {
+            goto('/app/learn')
         }
     }
     

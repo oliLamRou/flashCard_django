@@ -1,12 +1,17 @@
 import { api } from "$lib/api/api"
 
-export async function load_words() {
-    const response = await api('dictionary/', {
-        method: 'GET'
+export async function load_words(page=0, all=false) {
+    const param = new URLSearchParams({
+        page: page,
+        all: all,
+    }).toString()
+    
+    const response = await api('dictionary/?' + param, {
+        method: 'GET',
     })
 
     if (response.ok) {
-        return await response.json()            
+        return await response.json()
     }
 }
 

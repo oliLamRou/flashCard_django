@@ -29,7 +29,7 @@
         <div class="stat-title">Accuracy</div>
         <div class="stat-value">{accuracy}%</div>
         <div class="stat-desc">Correct Streak: {user_score.score}</div>
-        <div class="stat-desc">Last Attempt: {days_since(user_score.last_try)}</div>
+        <div class="stat-desc">Last Attempt: {days_since(user_score)}</div>
         {:else}
         <div class="stat-title">No Stats for Yet!</div>
         {/if}

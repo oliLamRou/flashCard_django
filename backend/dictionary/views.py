@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch, Q, F
 from django.shortcuts import get_object_or_404
 
 from dictionary.models import Word
@@ -90,10 +90,18 @@ def read(request):
         qs = qs.exclude(exclude_languages)
 
         #filter user
-        if request.query_params.get('all') == 'false':
+        everyoneWords = request.query_params.get('everyoneWords')
+        if not everyoneWords or everyoneWords == 'false':
             qs = qs.filter(user=request.user)
-
+        
         #Search by
+        search = request.query_params.get('search', '')
+        if search != '':
+            qs = qs.filter(
+                Q(FR__contains=search) | 
+                Q(KR__contains=search)
+            )
+
         #Order by
         qs = qs.order_by(*[preference.languageA])
         

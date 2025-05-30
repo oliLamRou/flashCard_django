@@ -1,3 +1,7 @@
+import os
+import requests
+from dotenv import load_dotenv
+
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import Response
@@ -14,6 +18,16 @@ from accounts.models import Preference
 
 from commun.enums import LANGUAGE
 
+def send_telegram_message(message):
+    load_dotenv()
+    # SECRETS = dotenv_values(find_dotenv())
+    BOT_TOKEN = os.getenv("TELEGRAM_SECRET_KEY")
+    CHAT_ID = os.getenv("CHAT_ID")
+
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    payload = {"chat_id": CHAT_ID, "text": message}
+    requests.post(url, data=payload)
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
@@ -21,6 +35,8 @@ def register(request):
         data = request.data
         username = data.get('username')
         password = data.get('password')
+
+        send_telegram_message(f'New User: {username}')
 
         if not username or not password:
             return Response(status=422)
@@ -42,6 +58,10 @@ def login(request):
     if request.method == 'POST':
         username = request.data.get("username")
         password = request.data.get("password")
+
+        if username not in ['userA', 'userC']:
+            send_telegram_message(f'login: {username}')
+        
         user = authenticate(username=username, password=password)
 
         if user is not None:

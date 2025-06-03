@@ -10,9 +10,9 @@ users = User.objects.all()
 for user in users:
     print(user)
 
-print("\n-------")
-selectedUser = User.objects.filter(username='userW').first()
-if selectedUser:
-    print("Selected User:", selectedUser.username)
-    print(selectedUser.preferences)
+# print("\n-------")
+# selectedUser = User.objects.filter(username='antoine').first()
+# if selectedUser:
+#     print("Selected User:", selectedUser.username)
+#     print(selectedUser.user_score)
     # selectedUser.delete()

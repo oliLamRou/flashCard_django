@@ -17,14 +17,16 @@
     let filters = $state({
         page_amount: data.page_amount,
         everyoneWords: false,
+        archived: false,
         current_page: data.current_page,
         search: '',
         page: 0
     })
 
-    const get_filtered_words = async(event) => {
+    const get_word_list = async(event) => {
+        if (event.type == 'reset') {filters.search = ''}
+        
         const attr = event.currentTarget.dataset
-        if (attr.action == 'clearSearch') {filters.search = ''}
         filters.page = attr.page ? attr.page : 0
 
         const data = await load_words(filters)
@@ -46,8 +48,10 @@
     const remove = async(id) => {
         const response = await remove_word(id)
         if (response.ok) {
-            const data = await load_words()
+            const data = await load_words(filters)
             words = data.words
+            filters.current_page = data.current_page
+            filters.page_amount = data.page_amount            
         }
     }
 
@@ -55,8 +59,10 @@
         const toArchive = word.user_score.archive ? false : true
         const response = await archive_word(word, toArchive)
         if (response.ok) {
-            const data = await load_words()
+            const data = await load_words(filters)
             words = data.words
+            filters.current_page = data.current_page
+            filters.page_amount = data.page_amount 
         }
     }
 
@@ -69,15 +75,21 @@
 
 <div class="flex gap-x-2 m-2">
     <button onclick={create} class="btn btn-sm btn-primary">Add Words</button>
-    <div class="join">
-        <input class="input input-sm" type="text" placeholder="Search in {languageA_value} and {languageB_value}" bind:value={filters.search}/>
-        <button onclick={get_filtered_words} class="btn btn-sm btn-secondary join-item" disabled={!filters.search}>Search</button>
-        <button onclick={get_filtered_words} data-action='clearSearch' class="btn btn-sm btn-neutral join-item" disabled={!filters.search}>clear</button>
-    </div>
+    <form onsubmit={get_word_list} onreset={get_word_list}>
+        <div class="join">
+            <input class="input input-sm" type="text" placeholder="Search in {languageA_value} and {languageB_value}" bind:value={filters.search}/>
+            <button type="submit" class="btn btn-sm btn-secondary join-item" disabled={!filters.search}>Search</button>
+            <button type="reset" onclick={get_word_list} data-action='clearSearch' class="btn btn-sm btn-neutral join-item" disabled={!filters.search}>clear</button>
+        </div>
+    </form>
     <label class="text-sm">
-        <input onchange={get_filtered_words} class="toggle toggle-sm" type="checkbox" bind:checked={filters.everyoneWords}/>
-        Everyones words
+        <input onchange={get_word_list} class="toggle toggle-sm" type="checkbox" bind:checked={filters.everyoneWords}/>
+        Everyones Words
     </label>
+    <label class="text-sm">
+        <input onchange={get_word_list} class="toggle toggle-sm" type="checkbox" bind:checked={filters.archived}/>
+        Archived Words
+    </label>    
 </div>
 
 <div class="overflow-x-auto rounded-box">
@@ -132,7 +144,7 @@
     <div class="mt-2 flex justify-center">
         <div class="join">
             {#each { length: filters.page_amount }, page}
-                <button onclick={get_filtered_words} data-page={page} class="join-item btn btn-xs">{page + 1}</button>
+                <button onclick={get_word_list} data-page={page} class="join-item btn btn-xs">{page + 1}</button>
             {/each}
         </div>
     </div>

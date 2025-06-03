@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 
-from django.db.models import Prefetch, Q, F
+from django.db.models import Prefetch, Q, F, FilteredRelation
 from django.shortcuts import get_object_or_404
 
 from dictionary.models import Word
@@ -72,14 +72,29 @@ def get_word_classes(request):
 def read(request):
     if request.method == 'GET':
         preference = Preference.objects.filter(user=request.user).first()
+        user = request.user
 
         qs = Word.objects.prefetch_related(
             Prefetch(
                 'scores',
-                queryset=Score.objects.filter(user=request.user),
+                queryset=Score.objects.filter(user=user),
                 to_attr='user_score'
             )
         )
+
+        qs = qs.annotate(
+            user_score_rel=FilteredRelation(
+            'scores',
+            condition=Q(scores__user=user)
+            )
+        )
+
+        #Archived
+        archived = request.query_params.get('archived')
+        if archived and archived == 'true':
+            qs = qs.filter(Q(user_score_rel__archive=True))
+        else:
+            qs = qs.filter(Q(user_score_rel__archive=False))
 
         exclude_languages = (
             Q(**{f"{preference.languageA}__isnull": True}) | 
@@ -95,7 +110,7 @@ def read(request):
             qs = qs.filter(user=request.user)
         
         #Search by
-        search = request.query_params.get('search', '')
+        search = request.query_params.get('search', '').lower()
         if search != '':
             qs = qs.filter(
                 Q(FR__contains=search) | 

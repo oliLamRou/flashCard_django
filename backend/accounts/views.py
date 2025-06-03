@@ -36,8 +36,6 @@ def register(request):
         username = data.get('username')
         password = data.get('password')
 
-        send_telegram_message(f'New User: {username}')
-
         if not username or not password:
             return Response(status=422)
         
@@ -46,7 +44,7 @@ def register(request):
         
         new_user = User.objects.create_user(username=username, password=password)
         if new_user:
-            print("New User Created", new_user.username)
+            send_telegram_message(f'New User: {username}')
             Preference.objects.create(user=new_user)
             return Response(status=201)
         
@@ -59,18 +57,20 @@ def login(request):
         username = request.data.get("username")
         password = request.data.get("password")
 
-        if username not in ['userA', 'userC']:
-            send_telegram_message(f'login: {username}')
-        
         user = authenticate(username=username, password=password)
 
         if user is not None:
+            if username not in ['userA', 'userC']:
+                send_telegram_message(f'{username} logged in')
+
             credentials = RefreshToken.for_user(user)
             print(f"New login for user: {user}\n")
             return Response({
                 "access": str(credentials.access_token),
                 "refresh": str(credentials)
             }, status=200)
+        else:
+            send_telegram_message(f'{username} failed login')
 
         return Response({"error": "Invalid credentials"}, status=401)    
 
